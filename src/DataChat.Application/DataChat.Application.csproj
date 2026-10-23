@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="..\DataChat.Domain\DataChat.Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Ports only: the adapters (Npgsql, Anthropic) live in Infrastructure. -->
+		<PackageReference Include="Microsoft.Extensions.Options" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+	</ItemGroup>
+</Project>

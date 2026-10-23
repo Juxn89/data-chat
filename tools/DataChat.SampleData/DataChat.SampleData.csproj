@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<!-- The sample dataset's generator (plan §0): a tool, not part of the app, so it may use anything it needs. -->
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ClosedXML" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="DataChat.SampleData.Tests" />
+	</ItemGroup>
+</Project>

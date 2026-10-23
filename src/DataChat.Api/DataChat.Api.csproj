@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<UserSecretsId>data-chat-api</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DataChat.Infrastructure\DataChat.Infrastructure.csproj" />
+		<ProjectReference Include="..\DataChat.ServiceDefaults\DataChat.ServiceDefaults.csproj" />
+	</ItemGroup>
+</Project>

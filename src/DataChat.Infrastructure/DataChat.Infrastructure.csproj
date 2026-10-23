@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="..\DataChat.Application\DataChat.Application.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Npgsql" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="DataChat.Integration.Tests" />
+	</ItemGroup>
+</Project>

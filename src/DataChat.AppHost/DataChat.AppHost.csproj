@@ -1,0 +1,16 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.6.1">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<AspireUseCliBundle>true</AspireUseCliBundle>
+		<UserSecretsId>data-chat-apphost</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DataChat.Api\DataChat.Api.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.JavaScript" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
+	</ItemGroup>
+</Project>

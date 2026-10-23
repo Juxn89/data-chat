@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/evals/">
+    <Project Path="evals/DataChat.Evals/DataChat.Evals.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/DataChat.Api/DataChat.Api.csproj" />
+    <Project Path="src/DataChat.AppHost/DataChat.AppHost.csproj" />
+    <Project Path="src/DataChat.Application/DataChat.Application.csproj" />
+    <Project Path="src/DataChat.Domain/DataChat.Domain.csproj" />
+    <Project Path="src/DataChat.Infrastructure/DataChat.Infrastructure.csproj" />
+    <Project Path="src/DataChat.ServiceDefaults/DataChat.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DataChat.Architecture.Tests/DataChat.Architecture.Tests.csproj" />
+    <Project Path="tests/DataChat.Domain.Tests/DataChat.Domain.Tests.csproj" />
+    <Project Path="tests/DataChat.SampleData.Tests/DataChat.SampleData.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/DataChat.SampleData/DataChat.SampleData.csproj" />
+  </Folder>
+</Solution>

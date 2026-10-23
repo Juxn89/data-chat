@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* Paper, ink and one accent for what the data says. The full set of tokens grows with the screens (days 7-8). */
+@theme {
+	--color-paper: #f7f6f3;
+	--color-card: #ffffff;
+	--color-ink: #1c1917;
+	--color-muted: #6b6560;
+	--color-line: #e4e0da;
+	--color-brand: #be123c;
+	--color-brand-soft: #fde8ec;
+
+	--font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+	background: var(--color-paper);
+	color: var(--color-ink);
+	font-family: var(--font-sans);
+}

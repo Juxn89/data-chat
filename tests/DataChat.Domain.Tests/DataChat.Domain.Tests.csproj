@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<RootNamespace>DataChat.Domain.Tests</RootNamespace>
+		<!-- As in a container without ICU: the domain must not depend on culture data (learned in booking-agent). -->
+		<InvariantGlobalization>true</InvariantGlobalization>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\DataChat.Domain\DataChat.Domain.csproj" />
+	</ItemGroup>
+</Project>

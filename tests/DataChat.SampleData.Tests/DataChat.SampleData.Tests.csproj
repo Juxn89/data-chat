@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="..\..\tools\DataChat.SampleData\DataChat.SampleData.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ClosedXML" />
+	</ItemGroup>
+</Project>
