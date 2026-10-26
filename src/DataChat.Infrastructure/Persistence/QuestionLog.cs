@@ -45,14 +45,58 @@ internal sealed class QuestionEntity
 
 	public bool NarrativeDiscarded { get; set; }
 
+	public Feedback? Feedback { get; set; }
+
+	public string? FeedbackNote { get; set; }
+
+	public Instant? FeedbackAt { get; set; }
+
 	public Instant CreatedAt { get; set; }
 }
 
-/// <summary>Records questions; their costs are what the daily budget adds up.</summary>
+/// <summary>Records questions, reads them back and keeps the feedback on them; their costs are what the daily budget adds up.</summary>
 /// <param name="db">The context.</param>
 /// <param name="clock">The clock.</param>
-internal sealed class QuestionLog(DataChatDbContext db, IClock clock) : IQuestionLog
+internal sealed class QuestionLog(DataChatDbContext db, IClock clock) : IQuestionLog, IQuestionHistory
 {
+	public async Task<IReadOnlyList<QuestionSummary>> ListAsync(Guid datasetId, int limit, CancellationToken cancellationToken) =>
+		await db.Questions.AsNoTracking()
+			.Where(q => q.DatasetId == datasetId)
+			.OrderByDescending(static q => q.CreatedAt)
+			.Take(limit)
+			.Select(static q => new QuestionSummary(
+				q.Id,
+				q.ConversationId,
+				q.Text,
+				q.Interpretation,
+				q.Outcome,
+				q.ErrorCode,
+				q.Clarification,
+				q.RowCount,
+				q.CostUsd,
+				q.LatencyMs,
+				q.Narrative != null && !q.NarrativeDiscarded,
+				q.NarrativeDiscarded,
+				q.Feedback,
+				q.FeedbackNote,
+				q.CreatedAt))
+			.ToListAsync(cancellationToken)
+			.ConfigureAwait(false);
+
+	public async Task<bool> SetFeedbackAsync(Guid questionId, Feedback feedback, string? note, CancellationToken cancellationToken)
+	{
+		if (await db.Questions.SingleOrDefaultAsync(q => q.Id == questionId, cancellationToken).ConfigureAwait(false) is not { } question)
+		{
+			return false;
+		}
+
+		question.Feedback = feedback;
+		question.FeedbackNote = note;
+		question.FeedbackAt = clock.GetCurrentInstant();
+		await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+		return true;
+	}
+
 	public async Task<Guid> AddAsync(QuestionRecord question, CancellationToken cancellationToken)
 	{
 		ArgumentNullException.ThrowIfNull(question);

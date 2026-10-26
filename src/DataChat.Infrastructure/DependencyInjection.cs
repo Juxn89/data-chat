@@ -62,7 +62,10 @@ public static class DependencyInjection
 			services.AddSingleton<INarrator, ClaudeNarrator>();
 		}
 
-		services.AddScoped<IQuestionLog, QuestionLog>();
+		services.AddScoped<QuestionLog>();
+		services.AddScoped<IQuestionLog>(static provider => provider.GetRequiredService<QuestionLog>());
+		services.AddScoped<IQuestionHistory>(static provider => provider.GetRequiredService<QuestionLog>());
+		services.AddScoped<QuestionHistory>();
 		services.AddScoped<AskQuestion>();
 
 		services.AddSingleton<ISpreadsheetReader, SpreadsheetReader>();

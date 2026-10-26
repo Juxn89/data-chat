@@ -99,6 +99,18 @@ namespace DataChat.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("error_code");
 
+                    b.Property<string>("Feedback")
+                        .HasColumnType("text")
+                        .HasColumnName("feedback");
+
+                    b.Property<Instant?>("FeedbackAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("feedback_at");
+
+                    b.Property<string>("FeedbackNote")
+                        .HasColumnType("text")
+                        .HasColumnName("feedback_note");
+
                     b.Property<long>("InputTokens")
                         .HasColumnType("bigint")
                         .HasColumnName("input_tokens");

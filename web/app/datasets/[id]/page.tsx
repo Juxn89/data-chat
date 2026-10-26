@@ -1,16 +1,17 @@
 "use client";
 
-import { ArrowLeft, CalendarClock, MessagesSquare, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, CalendarClock, History, MessagesSquare, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Chat } from "@/components/Chat";
+import { HistoryView } from "@/components/HistoryView";
 import { LayerEditor } from "@/components/LayerEditor";
 import { api, type Dataset, type SemanticLayer } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
 
-type Tab = "ask" | "layer";
+type Tab = "ask" | "layer" | "history";
 
 export default function DatasetPage() {
 	const { id } = useParams<{ id: string }>();
@@ -38,7 +39,7 @@ export default function DatasetPage() {
 	}
 
 	// Questions open once the layer is confirmed; until then the editor is the only step.
-	const current: Tab = layer.confirmed ? (tab ?? "ask") : "layer";
+	const current: Tab = tab === "history" ? "history" : layer.confirmed ? (tab ?? "ask") : "layer";
 	const tabButton = (value: Tab, label: string, Icon: typeof MessagesSquare, enabled: boolean) => (
 		<button
 			type="button"
@@ -77,11 +78,12 @@ export default function DatasetPage() {
 			<div role="tablist" className="flex gap-6 border-b border-line">
 				{tabButton("ask", t.dataset.ask, MessagesSquare, layer.confirmed)}
 				{tabButton("layer", t.dataset.layer, SlidersHorizontal, true)}
+				{tabButton("history", t.history.tab, History, true)}
 			</div>
 
-			{current === "ask" ? (
-				<Chat key={dataset.id} datasetId={dataset.id} layer={layer} />
-			) : (
+			{current === "history" ? <HistoryView datasetId={dataset.id} /> : null}
+			{current === "ask" ? <Chat key={dataset.id} datasetId={dataset.id} layer={layer} /> : null}
+			{current === "layer" ? (
 				<LayerEditor
 					layer={layer}
 					onConfirmed={(confirmed) => {
@@ -89,7 +91,7 @@ export default function DatasetPage() {
 						setTab("ask");
 					}}
 				/>
-			)}
+			) : null}
 		</div>
 	);
 }

@@ -10,7 +10,7 @@ export function ResultTable({ answer }: { answer: QueryAnswer }) {
 	const header = (index: number) => {
 		const column = answer.columns[index]!;
 		if (column.kind === "Time") {
-			return "";
+			return t.chat.timeColumn;
 		}
 
 		return column.kind === "PreviousMetric" ? `${column.name} (${t.chat.previous})` : column.name;
