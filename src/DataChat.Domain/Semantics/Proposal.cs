@@ -18,6 +18,11 @@ public static partial class Proposal
 	/// <summary>A column whose values are this distinct across the rows identifies rows instead of describing them.</summary>
 	private const double IdentifierRatio = 0.3;
 
+	/// <summary>
+	/// ...and has at least this many: in a file of ten rows, two salespeople are a high share but plainly a dimension.
+	/// </summary>
+	private const int MinIdentifierValues = 50;
+
 	/// <summary>The longest key.</summary>
 	private const int MaxKeyLength = 40;
 
@@ -34,7 +39,7 @@ public static partial class Proposal
 
 		foreach (var column in dataset.Columns.Where(column => column != time))
 		{
-			var identifier = column.Profile.DistinctCount > dataset.RowCount * IdentifierRatio;
+			var identifier = column.Profile.DistinctCount > dataset.RowCount * IdentifierRatio && column.Profile.DistinctCount >= MinIdentifierValues;
 			switch (column.Type)
 			{
 				case ColumnType.Decimal:

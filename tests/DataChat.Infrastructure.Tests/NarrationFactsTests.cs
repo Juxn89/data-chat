@@ -43,6 +43,13 @@ public sealed class NarrationFactsTests
 	}
 
 	[Fact]
+	public void A_top_n_is_told_as_a_ranking_not_as_everything() =>
+		Assert.Contains(
+			"only the first 1 of a ranking",
+			NarrationFacts.Of("¿Qué sucursal vendió más?", Answer([Branch, Sales], ["Centro", 12_078.19m]), limit: 1).Text,
+			StringComparison.Ordinal);
+
+	[Fact]
 	public void The_periods_dates_pass() =>
 		Assert.Empty(Comparison.Unsupported("Del 1 de julio al 30 de septiembre de 2026 (2026-07-01 a 2026-09-30), Centro vendió 12078.19."));
 

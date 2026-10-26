@@ -289,7 +289,7 @@ public sealed class AskQuestion(
 		var discarded = false;
 		if (answer is { Rows.Count: > 0 and <= NarrationFacts.MaxRows } && NarrationFacts.HasFigures(answer) && narrator.IsConfigured && usage.CostUsd < limits.QuestionBudgetUsd)
 		{
-			var facts = NarrationFacts.Of(text, answer);
+			var facts = NarrationFacts.Of(text, answer, translation.Query?.Limit);
 			var narration = await narrator.NarrateAsync(new NarrationRequest(text, translation.Interpretation, facts.Text), cancellationToken).ConfigureAwait(false);
 			usage = usage.Plus(narration.Usage);
 			if (narration.Text is { Length: > 0 } summary)

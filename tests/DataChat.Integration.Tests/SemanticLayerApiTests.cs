@@ -10,20 +10,10 @@ using DataChat.Infrastructure.Persistence;
 [Collection(PostgresCollection.Name)]
 public sealed class SemanticLayerApiTests(PostgresFixture postgres)
 {
-	// Ten lines, two branches, every invoice different: a date, an identifier, a dimension and an amount.
-	private const string Csv = """
-		Fecha,Factura,Sucursal,Total
-		2026-09-01,F-1,Centro,10.50
-		2026-09-01,F-2,Altamira,4.00
-		2026-09-02,F-3,Centro,7.25
-		2026-09-02,F-4,Centro,3.00
-		2026-09-03,F-5,Altamira,12.00
-		2026-09-03,F-6,Centro,1.75
-		2026-09-04,F-7,Altamira,8.00
-		2026-09-04,F-8,Centro,6.50
-		2026-09-05,F-9,Altamira,2.00
-		2026-09-05,F-10,Centro,9.00
-		""";
+	// Sixty lines, two branches, every invoice different: a date, an identifier (enough distinct values to be one), a
+	// dimension and an amount.
+	private static readonly string Csv = "Fecha,Factura,Sucursal,Total\n" + string.Concat(Enumerable.Range(1, 60).Select(static i =>
+		$"2026-09-{1 + (i % 28):D2},F-{i},{(i % 2 == 0 ? "Centro" : "Altamira")},{i}.50\n"));
 
 	[Fact]
 	public async Task A_new_dataset_comes_with_a_proposal_to_confirm()

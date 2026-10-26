@@ -63,8 +63,9 @@ public sealed partial class NarrationFacts
 	/// <summary>The facts of an answer.</summary>
 	/// <param name="question">The question, whose own numbers ("los 5", "2026") may be repeated.</param>
 	/// <param name="answer">The answer.</param>
+	/// <param name="limit">The number of rows the question asked for (a top N), so a ranking is not read as everything.</param>
 	/// <returns>The facts.</returns>
-	public static NarrationFacts Of(string question, QueryAnswer answer)
+	public static NarrationFacts Of(string question, QueryAnswer answer, int? limit = null)
 	{
 		ArgumentNullException.ThrowIfNull(question);
 		ArgumentNullException.ThrowIfNull(answer);
@@ -83,6 +84,11 @@ public sealed partial class NarrationFacts
 		{
 			text.Append(CultureInfo.InvariantCulture, $"Compared with: {compared.Start:uuuu-MM-dd} to {compared.End:uuuu-MM-dd}\n");
 			facts.AllowDates(compared);
+		}
+
+		if (limit is { } top)
+		{
+			text.Append(CultureInfo.InvariantCulture, $"These are only the first {top} of a ranking: other values exist and are not shown, so the totals and shares below cover these rows only.\n");
 		}
 
 		text.Append("Rows:\n");

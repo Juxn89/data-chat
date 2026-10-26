@@ -7,6 +7,7 @@ const apiUrl = process.env.API_URL ?? "http://localhost:5130";
 const nextConfig: NextConfig = {
 	output: "standalone",
 	poweredByHeader: false,
+	devIndicators: false,
 	async rewrites() {
 		return [{ source: "/api/:path*", destination: `${apiUrl}/:path*` }];
 	},

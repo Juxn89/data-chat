@@ -27,6 +27,19 @@ public sealed class ProposalTests
 	public void Text_with_few_values_is_a_dimension() =>
 		Assert.Equal(["sucursal", "categoria", "producto"], Proposed.Dimensions.Select(static d => d.Key));
 
+	[Fact]
+	public void In_a_small_file_text_with_few_values_is_still_a_dimension()
+	{
+		var small = Datasets.Dataset.Create(
+			"Ventas",
+			"septiembre.csv",
+			[("Vendedor", Datasets.ColumnType.Text, new Datasets.ColumnProfile(2, ["Ana", "Luis"])), ("Monto", Datasets.ColumnType.Decimal, new Datasets.ColumnProfile(4, []))],
+			4,
+			NodaTime.Instant.FromUtc(2026, 10, 26, 12, 0));
+
+		Assert.Equal(["vendedor"], Proposal.For(small).Dimensions.Select(static d => d.Key));
+	}
+
 	[Theory]
 	[InlineData("Categoría", "categoria")]
 	[InlineData("Precio unitario", "precio_unitario")]
