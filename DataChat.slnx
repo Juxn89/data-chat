@@ -13,6 +13,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/DataChat.Architecture.Tests/DataChat.Architecture.Tests.csproj" />
     <Project Path="tests/DataChat.Domain.Tests/DataChat.Domain.Tests.csproj" />
+    <Project Path="tests/DataChat.Integration.Tests/DataChat.Integration.Tests.csproj" />
     <Project Path="tests/DataChat.SampleData.Tests/DataChat.SampleData.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">

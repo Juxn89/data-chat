@@ -17,14 +17,31 @@
 		<PackageVersion Include="NodaTime.Testing" Version="3.3.5" />
 	</ItemGroup>
 
-	<!-- Npgsql 10.0.3 (27 May 2026), PostgreSQL licence: the evals load the sample dataset with COPY. -->
+	<!--
+		Npgsql 10.0.3 (27 May 2026) and its EF Core provider and NodaTime plugin 10.0.3 (10 Jul 2026), PostgreSQL licence:
+		datasets are loaded with COPY, their description lives in EF Core tables. Day 2 (26 Oct 2026, cut-off 12 Oct): EF
+		Core 10.0.13 is from 13 Oct and 10.0.14 from 25 Oct, so 10.0.12 (8 Sep), MIT; EFCore.NamingConventions 10.0.1
+		(22 Jan 2026), Apache-2.0.
+	-->
 	<ItemGroup Label="Persistence">
 		<PackageVersion Include="Npgsql" Version="10.0.3" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12" />
+		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="10.0.3" />
+		<PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
+		<!-- Day 2: the API's JSON for NodaTime types, ISO 8601. 1.4.0 (6 Jun 2026), Apache-2.0. -->
+		<PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.4.0" />
 	</ItemGroup>
 
-	<!-- The sample dataset's Excel files. ClosedXML 0.105.1 (25 Jul 2026), MIT. -->
+	<!--
+		ClosedXML 0.105.1 (25 Jul 2026), MIT: the sample's Excel files, and reading uploaded ones. CsvHelper 33.1.0
+		(2 Jun 2025), MS-PL or Apache-2.0: uploaded CSV files.
+	-->
 	<ItemGroup Label="Spreadsheets">
 		<PackageVersion Include="ClosedXML" Version="0.105.1" />
+		<PackageVersion Include="CsvHelper" Version="33.1.0" />
 	</ItemGroup>
 
 	<!-- Microsoft.Extensions: the 10.0.13 servicing wave is from 13 Oct, so 10.0.12 (8 Sep); 10.11.0 is from 14 Oct, so
@@ -33,6 +50,7 @@
 		<PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.12" />
 		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
 		<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.12" />
+		<PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.12" />
 		<PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.10.0" />
 		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.10.0" />
 		<PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.19.1" />

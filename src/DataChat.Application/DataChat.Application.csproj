@@ -7,5 +7,6 @@
 		<!-- Ports only: the adapters (Npgsql, Anthropic) live in Infrastructure. -->
 		<PackageReference Include="Microsoft.Extensions.Options" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="NodaTime" />
 	</ItemGroup>
 </Project>

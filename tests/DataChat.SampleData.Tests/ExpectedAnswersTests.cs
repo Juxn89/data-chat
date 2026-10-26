@@ -68,6 +68,30 @@ public sealed class ExpectedAnswersTests
 		Assert.Equal(top.Sum(static line => line.Units), (int)Cell("q16", 0, 1));
 	}
 
+	/// <summary>Each English question asks what a Spanish one asks, on the same sales: the figures must be the same.</summary>
+	public static TheoryData<string, string> EnglishTwins => new()
+	{
+		{ "en01", "q01" }, { "en02", "q02" }, { "en03", "q05" }, { "en04", "q08" }, { "en05", "q09" },
+		{ "en06", "q11" }, { "en07", "q07" }, { "en08", "q04" }, { "en09", "q13" }, { "en10", "q14" },
+		{ "en11", "q17" }, { "en12", "q19" }, { "en13", "q18" }, { "en14", "q16" }, { "en15", "q06" },
+	};
+
+	[Theory]
+	[MemberData(nameof(EnglishTwins))]
+	public void English_answers_have_the_same_figures_as_their_spanish_twins(string english, string spanish) =>
+		Assert.Equal(Figures(spanish), Figures(english));
+
+	[Fact]
+	public void A_period_without_sales_answers_null() =>
+		Assert.Equal(JsonValueKind.Null, Expected["q48"].GetProperty("rows")[0][0].ValueKind);
+
+	private static decimal[] Figures(string id) =>
+		Expected[id].GetProperty("rows").EnumerateArray()
+			.SelectMany(static row => row.EnumerateArray())
+			.Where(static cell => cell.ValueKind == JsonValueKind.Number)
+			.Select(static cell => cell.GetDecimal())
+			.ToArray();
+
 	private static IEnumerable<SaleLine> Between(DateOnly from, DateOnly to) => Lines.Where(line => line.Date >= from && line.Date <= to);
 
 	private static decimal Sum(IEnumerable<SaleLine> lines) => decimal.Round(lines.Sum(static line => line.Total), 2);

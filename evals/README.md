@@ -30,6 +30,6 @@ Both start a throwaway Postgres with Testcontainers, so Docker has to be running
 
 | Set | Questions | Since |
 |---|---|---|
-| Spanish, with expected answers | 20 of 60 | day 1 (23 Oct 2026) |
-| English, on the English dataset | 0 of 15 | day 2 |
+| Spanish, with expected answers | 60 of 60 | days 1-2 (23 and 26 Oct 2026) |
+| English, on the English dataset | 15 of 15, each the twin of a Spanish one with the same figures (a test checks it) | day 2 (26 Oct 2026) |
 | Ambiguous (should ask back), follow-ups, adversarial | 0 | days 5-6 |
