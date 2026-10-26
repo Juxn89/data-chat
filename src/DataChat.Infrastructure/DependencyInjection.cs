@@ -1,6 +1,7 @@
 namespace DataChat.Infrastructure;
 
 using DataChat.Application.Features.Datasets;
+using DataChat.Application.Features.Semantics;
 using DataChat.Infrastructure.Files;
 using DataChat.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +36,8 @@ public static class DependencyInjection
 		services.AddScoped<IDatasetStore, DatasetStore>();
 		services.AddScoped<ImportDataset>();
 		services.AddScoped<DatasetQueries>();
+		services.AddScoped<ISemanticLayerStore, SemanticLayerStore>();
+		services.AddScoped<SemanticLayers>();
 		return services;
 	}
 

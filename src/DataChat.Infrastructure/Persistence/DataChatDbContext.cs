@@ -14,6 +14,8 @@ internal sealed class DataChatDbContext(DbContextOptions<DataChatDbContext> opti
 {
 	public DbSet<DatasetRecord> Datasets => Set<DatasetRecord>();
 
+	public DbSet<SemanticLayerRecord> SemanticLayers => Set<SemanticLayerRecord>();
+
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<DatasetRecord>(dataset =>
@@ -33,7 +35,16 @@ internal sealed class DataChatDbContext(DbContextOptions<DataChatDbContext> opti
 				column.Property(static c => c.PhysicalName).IsRequired();
 				column.Property(static c => c.Name).IsRequired();
 				column.Property(static c => c.Type).HasConversion<string>().IsRequired();
+				column.Property(static c => c.Samples).HasColumnType("text[]").HasDefaultValueSql("'{}'");
 			});
+		});
+
+		modelBuilder.Entity<SemanticLayerRecord>(layer =>
+		{
+			layer.ToTable("semantic_layers");
+			layer.HasKey(static l => l.DatasetId);
+			layer.Property(static l => l.Document).HasColumnType("jsonb").IsRequired();
+			layer.HasOne<DatasetRecord>().WithOne().HasForeignKey<SemanticLayerRecord>(static l => l.DatasetId).OnDelete(DeleteBehavior.Cascade);
 		});
 	}
 }
@@ -66,6 +77,10 @@ internal sealed class DatasetColumnRecord
 	public required string Name { get; set; }
 
 	public Domain.Datasets.ColumnType Type { get; set; }
+
+	public int DistinctCount { get; set; }
+
+	public List<string> Samples { get; set; } = [];
 }
 
 internal static class PersistenceSetup

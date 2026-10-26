@@ -7,7 +7,8 @@ using NodaTime;
 /// <param name="PhysicalName">Its column in the dataset's table, e.g. <c>c_001</c>.</param>
 /// <param name="Name">What people call it, from the file's header, cleaned.</param>
 /// <param name="Type">What it holds.</param>
-public sealed record DatasetColumn(int Ordinal, string PhysicalName, string Name, ColumnType Type);
+/// <param name="Profile">Its distinct values and samples.</param>
+public sealed record DatasetColumn(int Ordinal, string PhysicalName, string Name, ColumnType Type, ColumnProfile Profile);
 
 /// <summary>
 /// A spreadsheet imported into its own table (ADR 0003): one physical table per dataset, typed columns named
@@ -30,6 +31,12 @@ public sealed class Dataset
 	/// <summary>The id.</summary>
 	public Guid Id { get; }
 
+	/// <summary>The column with a physical name.</summary>
+	/// <param name="physicalName">E.g. <c>c_001</c>.</param>
+	/// <returns>The column, or null.</returns>
+	public DatasetColumn? Column(string physicalName) =>
+		Columns.FirstOrDefault(column => string.Equals(column.PhysicalName, physicalName, StringComparison.Ordinal));
+
 	/// <summary>What people call it; the file's name unless they gave another.</summary>
 	public string Name { get; }
 
@@ -51,11 +58,11 @@ public sealed class Dataset
 	/// <summary>A new dataset.</summary>
 	/// <param name="name">Its name.</param>
 	/// <param name="sourceFile">The file's name.</param>
-	/// <param name="columns">The columns' names and types, in order.</param>
+	/// <param name="columns">The columns' names, types and profiles, in order.</param>
 	/// <param name="rowCount">The number of data rows.</param>
 	/// <param name="importedAt">Now.</param>
 	/// <returns>The dataset.</returns>
-	public static Dataset Create(string name, string sourceFile, IReadOnlyList<(string Name, ColumnType Type)> columns, int rowCount, Instant importedAt)
+	public static Dataset Create(string name, string sourceFile, IReadOnlyList<(string Name, ColumnType Type, ColumnProfile Profile)> columns, int rowCount, Instant importedAt)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		ArgumentException.ThrowIfNullOrWhiteSpace(sourceFile);
@@ -65,7 +72,7 @@ public sealed class Dataset
 			throw new ArgumentException("A dataset has at least one column.", nameof(columns));
 		}
 
-		var built = columns.Select(static (column, i) => new DatasetColumn(i + 1, Sheet.PhysicalName(i + 1), column.Name, column.Type)).ToArray();
+		var built = columns.Select(static (column, i) => new DatasetColumn(i + 1, Sheet.PhysicalName(i + 1), column.Name, column.Type, column.Profile)).ToArray();
 		return new Dataset(Guid.CreateVersion7(), name.Trim(), sourceFile, built, rowCount, importedAt);
 	}
 
