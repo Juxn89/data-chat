@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
-/* Paper, ink and one accent for what the data says. The full set of tokens grows with the screens (days 7-8). */
+/* Warm paper and ink, one rose accent for the brand, and a categorical palette for series validated with the
+   dataviz palette validator on the white card (26 Oct 2026: lightness, chroma, adjacent CVD and normal-vision
+   separation all pass; yellow, aqua and magenta sit under 3:1 on white, so every chart has a legend, a tooltip and
+   a table view). The series are in :root below; they take their slots in order and never cycle, and the compared
+   period is a neutral, not a series. */
 @theme {
 	--color-paper: #f7f6f3;
 	--color-card: #ffffff;
@@ -8,13 +12,43 @@
 	--color-muted: #6b6560;
 	--color-line: #e4e0da;
 	--color-brand: #be123c;
+	--color-brand-dark: #9f1239;
 	--color-brand-soft: #fde8ec;
+	--color-info: #075985;
+	--color-info-soft: #e1f0fa;
+	--color-danger: #b42318;
+	--color-danger-soft: #fde9e7;
+	--color-up: #0f7a55;
+	--color-down: #b42318;
+
 
 	--font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+:root {
+	/* The charts read these in SVG attributes, outside any utility class: Tailwind does not emit theme variables
+	   that no class uses, so the chart's colours live here. */
+	--chart-series-1: #be123c;
+	--chart-series-2: #2a78d6;
+	--chart-series-3: #eda100;
+	--chart-series-4: #1baf7a;
+	--chart-series-5: #eb6834;
+	--chart-series-6: #6250d6;
+	--chart-series-7: #008300;
+	--chart-series-8: #e87ba4;
+	--chart-compared: #b8b2aa;
+	--chart-grid: #e4e0da;
+	--chart-axis: #6b6560;
+	--chart-surface: #ffffff;
 }
 
 body {
 	background: var(--color-paper);
 	color: var(--color-ink);
 	font-family: var(--font-sans);
+}
+
+.tabular {
+	font-variant-numeric: tabular-nums;
 }

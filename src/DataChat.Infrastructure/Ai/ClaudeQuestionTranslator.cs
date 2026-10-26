@@ -149,9 +149,13 @@ internal sealed class ClaudeQuestionTranslator(IOptions<AnthropicOptions> option
 		List<ContentBlockParam> content = [new TextBlockParam { Text = $"<dataset>\n{Describe(request)}\n</dataset>" }];
 		if (request.Previous is { } previous)
 		{
+			// The previous period's dates, worked out here, so "el trimestre anterior" is counted from them, not guessed.
+			var covered = previous.Query?.Period?.Resolve(request.Today) is { } period
+				? $", which covered {period.Start.ToString("uuuu-MM-dd", CultureInfo.InvariantCulture)} to {period.End.ToString("uuuu-MM-dd", CultureInfo.InvariantCulture)}"
+				: string.Empty;
 			var read = previous.Query is null
 				? "it was not read into a query"
-				: $"it was read as {JsonSerializer.Serialize(previous.Query, QuestionSchema.Json)}";
+				: $"it was read as {JsonSerializer.Serialize(previous.Query, QuestionSchema.Json)}{covered}";
 			content.Add(new TextBlockParam
 			{
 				Text = $"<previous_question>\n{previous.Text}\n</previous_question>\n" +

@@ -60,7 +60,7 @@ internal sealed class QueryRunner(NpgsqlDataSource source, IOptions<QueryOptions
 				compiled.Parameters.Select(static p => new ShownParameter($"@{p.Name}", Show(p.Value))).ToArray(),
 				compiled.Period,
 				compiled.ComparedWith,
-				Truncated: rows.Count == compiled.Limit);
+				Truncated: rows.Count == SemanticQuery.MaxRows);
 		}
 		catch (PostgresException exception) when (exception.SqlState == QueryCanceled)
 		{

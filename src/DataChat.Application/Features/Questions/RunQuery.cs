@@ -41,7 +41,7 @@ public sealed record ShownParameter(string Name, string Value);
 /// <param name="Parameters">Its parameters.</param>
 /// <param name="Period">The dates asked about, when the query had a period.</param>
 /// <param name="ComparedWith">The dates compared with, when it had a comparison.</param>
-/// <param name="Truncated">The rows stopped at the limit; there may be more.</param>
+/// <param name="Truncated">The rows stopped at the server's cap (<see cref="SemanticQuery.MaxRows"/>); there may be more.</param>
 public sealed record QueryAnswer(
 	IReadOnlyList<ResultColumn> Columns,
 	IReadOnlyList<IReadOnlyList<object?>> Rows,
@@ -49,7 +49,11 @@ public sealed record QueryAnswer(
 	IReadOnlyList<ShownParameter> Parameters,
 	DateInterval? Period,
 	DateInterval? ComparedWith,
-	bool Truncated);
+	bool Truncated)
+{
+	/// <summary>How to draw it, from its shape (ADR 0004).</summary>
+	public ChartKind Chart => Charts.Choose(Columns, Rows);
+}
 
 /// <summary>Compiles a semantic query to SQL and runs it with read-only rights.</summary>
 public interface IQueryRunner
