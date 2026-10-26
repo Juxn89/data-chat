@@ -1,0 +1,44 @@
+[
+  {
+    "question": "Ventas por sucursal en el tercer trimestre",
+    "interpretation": "Total por sucursal del 1 de julio al 30 de septiembre de 2026, de mayor a menor.",
+    "clarification": null,
+    "query": {
+      "metrics": ["total"],
+      "dimensions": ["sucursal"],
+      "period": { "from": "2026-07-01", "to": "2026-09-30" },
+      "sort": { "by": "total", "direction": "Descending" }
+    }
+  },
+  {
+    "question": "Ventas por mes en el tercer trimestre",
+    "interpretation": "Total por mes del 1 de julio al 30 de septiembre de 2026.",
+    "clarification": null,
+    "query": {
+      "metrics": ["total"],
+      "dimensions": [],
+      "grain": "Month",
+      "period": { "from": "2026-07-01", "to": "2026-09-30" },
+      "sort": { "by": "time", "direction": "Ascending" }
+    }
+  },
+  {
+    "question": "¿Y solo en Centro?",
+    "interpretation": "Lo mismo, solo para la sucursal Centro.",
+    "clarification": null,
+    "query": {
+      "metrics": ["total"],
+      "dimensions": [],
+      "grain": "Month",
+      "filters": [{ "dimension": "sucursal", "operator": "In", "values": ["Centro"] }],
+      "period": { "from": "2026-07-01", "to": "2026-09-30" },
+      "sort": { "by": "time", "direction": "Ascending" }
+    }
+  },
+  {
+    "question": "¿Cuál fue la mejor?",
+    "interpretation": "",
+    "clarification": "¿La mejor sucursal o la mejor categoría, y en qué periodo?",
+    "query": null
+  }
+]

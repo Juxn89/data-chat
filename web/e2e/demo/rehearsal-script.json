@@ -1,0 +1,26 @@
+[
+  {
+    "question": "¿Cuánto vendió cada sucursal el último trimestre?",
+    "interpretation": "Ventas por sucursal en el último trimestre, de mayor a menor.",
+    "clarification": null,
+    "query": { "metrics": ["total"], "dimensions": ["sucursal"], "period": { "named": "LastQuarter" }, "sort": { "by": "total", "direction": "Descending" } }
+  },
+  {
+    "question": "Ventas por mes en los últimos 12 meses",
+    "interpretation": "Ventas por mes en los últimos 12 meses.",
+    "clarification": null,
+    "query": { "metrics": ["total"], "dimensions": [], "grain": "Month", "period": { "named": "LastTwelveMonths" }, "sort": { "by": "time", "direction": "Ascending" } }
+  },
+  {
+    "question": "¿Y solo en Centro?",
+    "interpretation": "Ventas por mes en los últimos 12 meses, solo en la sucursal Centro.",
+    "clarification": null,
+    "query": { "metrics": ["total"], "dimensions": [], "grain": "Month", "filters": [{ "dimension": "sucursal", "operator": "In", "values": ["Centro"] }], "period": { "named": "LastTwelveMonths" }, "sort": { "by": "time", "direction": "Ascending" } }
+  },
+  {
+    "question": "Ventas por categoría del último trimestre frente al mismo del año pasado",
+    "interpretation": "Ventas por categoría en el último trimestre, comparadas con el mismo trimestre del año anterior.",
+    "clarification": null,
+    "query": { "metrics": ["total"], "dimensions": ["categoria"], "period": { "named": "LastQuarter" }, "compareTo": "SamePeriodLastYear", "sort": { "by": "total", "direction": "Descending" } }
+  }
+]
