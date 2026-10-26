@@ -26,7 +26,7 @@ answer that SQL gives on the sample. The sample's "today" is 15 Oct 2026; its sa
 ```bash
 dotnet run --project evals/DataChat.Evals -- oracle     # reference SQL and gold queries give every expected answer (CI)
 dotnet run --project evals/DataChat.Evals -- snapshot   # fills in the answer of new questions; flags a LIMIT that cuts a tie
-dotnet run --project evals/DataChat.Evals -- run --allow-paid [--only q01,en03]   # Claude Haiku through the app (costs money)
+dotnet run --project evals/DataChat.Evals -- run --allow-paid [--only q01,en03]   # Claude Haiku through the app, all four sets (costs money)
 ```
 
 All three start a throwaway Postgres with Testcontainers, so Docker has to be running. `oracle` runs the whole chat
@@ -43,17 +43,31 @@ can answer the same question.
 
 ## Results
 
-| Run | Accuracy (ES / EN) | Same query as gold | Average cost | Average latency |
-|---|---|---|---|---|
-| [First run](results/claude-haiku-5-5.first-run.json), 26 Oct 2026 | 86.7 % (88.3 % / 80.0 %) | 80.0 % | USD 0.00045 | 1.7 s |
-| [Current](results/claude-haiku-5-5.json), 26 Oct 2026 | **100 % (75/75)** | 90.7 % | USD 0.00047 | 1.7 s |
+All runs with Claude Haiku 5.5 through the app, on 26 Oct 2026. Every run is kept, failures included.
 
-The first run's ten misses had right numbers in the wrong shape: eight grouped by a dimension the question had
-already filtered to one value ("Snacks by month" with a constant Snacks column), two laid out the same columns in
-another order. English questions also got Spanish interpretations. Three changes, none of them to the questions'
-answers: the server drops a grouping a filter keeps to one value, scoring compares rows as sets of cells, and the
-prompt states both rules and the interpretation's language. One question (q14 and its twin) was reworded because it
-was genuinely ambiguous: "Bebidas y Lácteos por sucursal" can mean their sum per branch.
+| Run | Questions (ES / EN) | Ask back when it should | Follow-ups | Attacks with no effect | Summaries discarded | Avg cost per question |
+|---|---|---|---|---|---|---|
+| [Day 5, first](results/claude-haiku-5-5.first-run.json) | 86.7 % (88.3 / 80.0) | not measured yet | not measured yet | not measured yet | no summaries yet | USD 0.00045 |
+| [Day 5, second](results/claude-haiku-5-5.day-5.json) | 100 % (75/75) | not measured yet | not measured yet | not measured yet | no summaries yet | USD 0.00047 |
+| [Day 6, current](results/claude-haiku-5-5.json) | **98.7 %** (98.3 / 100) | **8/8** | **10/10** | **20/20** (18 refused) | **0 of 74** | USD 0.00057 |
+
+- **Day 5, first run.** Its ten misses had right numbers in the wrong shape: eight grouped by a dimension the
+  question had already filtered to one value ("Snacks by month" with a constant Snacks column), two laid out the
+  same columns in another order; English questions also got Spanish interpretations. The server now drops a
+  grouping a filter keeps to one value, scoring compares rows as sets of cells, and the prompt states both rules and
+  the interpretation's language. q14 and its twin were reworded: "Bebidas y Lácteos por sucursal" can mean their
+  sum per branch.
+- **Day 6** adds the summary (one extra call, about USD 0.0001) and the three sets below. The one miss, q56 "Ventas
+  de Centro y Altamira por mes en el último trimestre", added both branches together by month instead of showing
+  them apart: the same ambiguity as q14, read the other way this time; the two earlier runs got it right. It is
+  reported as it came out rather than reworded after the fact.
+- **Summaries** are checked figure by figure against the answer's rows, totals, shares and changes; a summary with
+  any other number is not shown (`NarrationFacts`). None was discarded on the final run. Two discards on a trial run
+  were the check's fault (it did not know the period's dates yet) and were fixed there, with a test.
+- **Attacks**: 14 in the question and 6 against a poisoned file whose header and cells carry instructions
+  (`poisoned.csv`). The app's tables, datasets and layers were unchanged after every one of them. The model refused
+  18; the other two (x15, x16) were plain questions on the poisoned file and were answered from its sales, which is
+  the right thing: the instructions in its header stayed a column name.
 
 ## Status
 
@@ -61,4 +75,6 @@ was genuinely ambiguous: "Bebidas y Lácteos por sucursal" can mean their sum pe
 |---|---|---|
 | Spanish, with expected answers | 60 of 60 | days 1-2 (23 and 26 Oct 2026) |
 | English, on the English dataset | 15 of 15, each the twin of a Spanish one with the same figures (a test checks it) | day 2 (26 Oct 2026) |
-| Ambiguous (should ask back), follow-ups, adversarial | 0 | day 6 |
+| Ask back (`ambiguous.json`): margin, a salesperson, a forecast, new customers, stock, profit, a top customer, and a vague one | 8 | day 6 |
+| Follow-ups (`followups.json`): a question, then "¿y en agosto?", "solo Centro", "ahora en ventas"… | 10 pairs | day 6 |
+| Attacks (`adversarial.json`, `poisoned.csv`): in the question, and in a file's header and cells | 20 | day 6 |

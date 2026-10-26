@@ -10,15 +10,21 @@ using DataChat.Domain.Semantics;
 using Microsoft.Extensions.Options;
 using NodaTime;
 
+/// <summary>The question before this one in a conversation, and how it was read: what "¿y en abril?" refers to.</summary>
+/// <param name="Text">What was asked.</param>
+/// <param name="Query">How it was read, when it was read into a query.</param>
+public sealed record PreviousQuestion(string Text, SemanticQuery? Query);
+
 /// <summary>What the model was asked: the question and everything it may know about the dataset.</summary>
 /// <param name="Question">The question, as the person wrote it.</param>
 /// <param name="Dataset">The dataset.</param>
 /// <param name="Layer">Its confirmed layer: the only names and keys the model sees.</param>
 /// <param name="Today">The "today" named periods resolve against.</param>
 /// <param name="Feedback">On a retry: why the previous query was rejected.</param>
-public sealed record TranslationRequest(string Question, Dataset Dataset, SemanticLayer Layer, LocalDate Today, IReadOnlyList<SemanticIssue> Feedback);
+/// <param name="Previous">The question before, in a conversation.</param>
+public sealed record TranslationRequest(string Question, Dataset Dataset, SemanticLayer Layer, LocalDate Today, IReadOnlyList<SemanticIssue> Feedback, PreviousQuestion? Previous = null);
 
-/// <summary>What a translation cost.</summary>
+/// <summary>What a call to the model cost.</summary>
 /// <param name="Model">The model.</param>
 /// <param name="InputTokens">Input tokens.</param>
 /// <param name="OutputTokens">Output tokens, thinking included.</param>
@@ -78,6 +84,7 @@ public enum QuestionOutcome
 
 /// <summary>A question as it is recorded: what was asked, how it was read and what it cost.</summary>
 /// <param name="DatasetId">The dataset.</param>
+/// <param name="ConversationId">The conversation it belongs to.</param>
 /// <param name="Text">The question.</param>
 /// <param name="Interpretation">How it was read.</param>
 /// <param name="Query">The query, when there was one.</param>
@@ -85,10 +92,13 @@ public enum QuestionOutcome
 /// <param name="Outcome">How it ended.</param>
 /// <param name="ErrorCode">When it failed, why.</param>
 /// <param name="RowCount">The answer's rows.</param>
-/// <param name="Usage">What the model cost.</param>
+/// <param name="Usage">What the model cost, narration included.</param>
 /// <param name="LatencyMs">How long it took, model and query.</param>
+/// <param name="Narrative">The summary the model wrote; shown only when it passed the check.</param>
+/// <param name="NarrativeDiscarded">The summary quoted a number that is not in the answer, so it was not shown.</param>
 public sealed record QuestionRecord(
 	Guid DatasetId,
+	Guid ConversationId,
 	string Text,
 	string Interpretation,
 	SemanticQuery? Query,
@@ -97,7 +107,9 @@ public sealed record QuestionRecord(
 	string? ErrorCode,
 	int RowCount,
 	TranslationUsage Usage,
-	long LatencyMs);
+	long LatencyMs,
+	string? Narrative = null,
+	bool NarrativeDiscarded = false);
 
 /// <summary>Where questions are recorded; their costs are what the daily budget adds up.</summary>
 public interface IQuestionLog
@@ -113,6 +125,13 @@ public interface IQuestionLog
 	/// <param name="cancellationToken">Cancellation.</param>
 	/// <returns>USD.</returns>
 	Task<decimal> SpentSinceAsync(Instant since, CancellationToken cancellationToken);
+
+	/// <summary>The last question of a conversation on a dataset.</summary>
+	/// <param name="conversationId">The conversation.</param>
+	/// <param name="datasetId">The dataset it must be about.</param>
+	/// <param name="cancellationToken">Cancellation.</param>
+	/// <returns>The question, or null when there is no such conversation on that dataset.</returns>
+	Task<PreviousQuestion?> LastInConversationAsync(Guid conversationId, Guid datasetId, CancellationToken cancellationToken);
 }
 
 /// <summary>The question's limits and the model's daily budget.</summary>
@@ -129,28 +148,41 @@ public sealed class AskOptions
 	[Range(0.01, 1000)]
 	public decimal DailyBudgetUsd { get; set; } = 1.00m;
 
-	/// <summary>A question that already cost this much gets no retry (plan §5: about USD 0.001 per question).</summary>
+	/// <summary>A question that already cost this much gets no retry and no summary (plan §5: about USD 0.001 per question).</summary>
 	[Range(0.001, 10)]
 	public decimal QuestionBudgetUsd { get; set; } = 0.01m;
 }
 
 /// <summary>A question's answer: how it was read, and the rows or the question back.</summary>
 /// <param name="QuestionId">The recorded question's id.</param>
+/// <param name="ConversationId">The conversation, to send with a follow-up.</param>
 /// <param name="Interpretation">How it was read.</param>
 /// <param name="Query">The semantic query, when there was one.</param>
 /// <param name="Clarification">The question back, when there was one.</param>
 /// <param name="Answer">The rows and their SQL, when it was answered.</param>
+/// <param name="Narrative">A sentence or two about the rows, every figure in it checked against them.</param>
 /// <param name="Usage">What the model cost.</param>
-public sealed record AskAnswer(Guid QuestionId, string Interpretation, SemanticQuery? Query, string? Clarification, QueryAnswer? Answer, TranslationUsage Usage);
+public sealed record AskAnswer(
+	Guid QuestionId,
+	Guid ConversationId,
+	string Interpretation,
+	SemanticQuery? Query,
+	string? Clarification,
+	QueryAnswer? Answer,
+	string? Narrative,
+	TranslationUsage Usage);
 
 /// <summary>
-/// Answers a question in plain language (plan §3, steps 1-5): the model reads it into a semantic query against the
-/// confirmed layer; an invalid query gets one retry with the reasons; the query is compiled and run read-only. Every
-/// question is recorded with its cost, and the day's total caps what the model may spend.
+/// Answers a question in plain language (plan §3, steps 1-7): the model reads it, in the light of the question before
+/// it in the same conversation, into a semantic query against the confirmed layer; an invalid query gets one retry
+/// with the reasons; the query runs read-only; the model then summarizes the rows, and the summary is shown only if
+/// every number in it is one of the answer's figures. Every question is recorded with its cost, and the day's total
+/// caps what the model may spend.
 /// </summary>
 /// <param name="datasets">The datasets.</param>
 /// <param name="layers">The confirmed layers.</param>
-/// <param name="translator">The model.</param>
+/// <param name="translator">The model reading questions.</param>
+/// <param name="narrator">The model summarizing answers.</param>
 /// <param name="runner">The query runner.</param>
 /// <param name="log">The question log.</param>
 /// <param name="options">The limits.</param>
@@ -159,6 +191,7 @@ public sealed class AskQuestion(
 	IDatasetStore datasets,
 	ISemanticLayerStore layers,
 	IQuestionTranslator translator,
+	INarrator narrator,
 	IQueryRunner runner,
 	IQuestionLog log,
 	IOptions<AskOptions> options,
@@ -170,12 +203,16 @@ public sealed class AskQuestion(
 	/// <summary>The day's budget is spent.</summary>
 	public static readonly Error DailyBudgetSpent = Error.Unavailable("ai.daily_budget", "Today's budget for questions is spent; ask again tomorrow.");
 
+	/// <summary>A follow-up to a conversation that does not exist on this dataset.</summary>
+	public static readonly Error UnknownConversation = Error.NotFound("conversation.not_found", "There is no such conversation about this dataset; ask without one to start a new one.");
+
 	/// <summary>Asks a question.</summary>
 	/// <param name="datasetId">The dataset.</param>
 	/// <param name="question">The question.</param>
+	/// <param name="conversationId">The conversation it follows up on, or null to start one.</param>
 	/// <param name="cancellationToken">Cancellation.</param>
 	/// <returns>The answer, or why there is none.</returns>
-	public async Task<Result<AskAnswer>> ExecuteAsync(Guid datasetId, string question, CancellationToken cancellationToken)
+	public async Task<Result<AskAnswer>> ExecuteAsync(Guid datasetId, string question, Guid? conversationId, CancellationToken cancellationToken)
 	{
 		var limits = options.Value;
 		if (string.IsNullOrWhiteSpace(question) || question.Length > limits.MaxQuestionLength)
@@ -193,6 +230,13 @@ public sealed class AskQuestion(
 			return RunQuery.NotConfirmed;
 		}
 
+		PreviousQuestion? previous = null;
+		if (conversationId is { } existing
+			&& (previous = await log.LastInConversationAsync(existing, datasetId, cancellationToken).ConfigureAwait(false)) is null)
+		{
+			return UnknownConversation;
+		}
+
 		if (!translator.IsConfigured)
 		{
 			return NotConfigured;
@@ -207,12 +251,12 @@ public sealed class AskQuestion(
 		var started = Stopwatch.GetTimestamp();
 		var today = layer.AsOf ?? now.InUtc().Date;
 		var text = question.Trim();
-		var translation = await translator.TranslateAsync(new TranslationRequest(text, dataset, layer, today, []), cancellationToken).ConfigureAwait(false);
+		var translation = await translator.TranslateAsync(new TranslationRequest(text, dataset, layer, today, [], previous), cancellationToken).ConfigureAwait(false);
 		var usage = translation.Usage;
 		var issues = translation.Query?.Validate(layer) ?? [];
 		if (issues.Count > 0 && usage.CostUsd < limits.QuestionBudgetUsd)
 		{
-			translation = await translator.TranslateAsync(new TranslationRequest(text, dataset, layer, today, issues), cancellationToken).ConfigureAwait(false);
+			translation = await translator.TranslateAsync(new TranslationRequest(text, dataset, layer, today, issues, previous), cancellationToken).ConfigureAwait(false);
 			usage = usage.Plus(translation.Usage);
 			issues = translation.Query?.Validate(layer) ?? [];
 		}
@@ -239,10 +283,30 @@ public sealed class AskQuestion(
 			error = Error.Validation("question.untranslatable", "The question could not be turned into a valid query; try rephrasing it.");
 		}
 
+		// What the model wrote is kept in the log even when discarded, so a discard can be looked into; only a summary
+		// that passed the check reaches the person.
+		string? written = null;
+		var discarded = false;
+		if (answer is { Rows.Count: > 0 and <= NarrationFacts.MaxRows } && NarrationFacts.HasFigures(answer) && narrator.IsConfigured && usage.CostUsd < limits.QuestionBudgetUsd)
+		{
+			var facts = NarrationFacts.Of(text, answer);
+			var narration = await narrator.NarrateAsync(new NarrationRequest(text, translation.Interpretation, facts.Text), cancellationToken).ConfigureAwait(false);
+			usage = usage.Plus(narration.Usage);
+			if (narration.Text is { Length: > 0 } summary)
+			{
+				written = summary;
+				discarded = facts.Unsupported(summary).Count > 0;
+			}
+		}
+
+		var narrative = discarded ? null : written;
+
+		var conversation = conversationId ?? Guid.CreateVersion7();
 		var outcome = error is not null ? QuestionOutcome.Failed : answer is not null ? QuestionOutcome.Answered : QuestionOutcome.Clarified;
 		var id = await log.AddAsync(
 			new QuestionRecord(
 				datasetId,
+				conversation,
 				text,
 				translation.Interpretation,
 				translation.Query,
@@ -251,7 +315,9 @@ public sealed class AskQuestion(
 				error?.Code,
 				answer?.Rows.Count ?? 0,
 				usage,
-				(long)Stopwatch.GetElapsedTime(started).TotalMilliseconds),
+				(long)Stopwatch.GetElapsedTime(started).TotalMilliseconds,
+				written,
+				discarded),
 			cancellationToken).ConfigureAwait(false);
 
 		if (error is not null)
@@ -264,6 +330,6 @@ public sealed class AskQuestion(
 			return Error.Unavailable("ai.failed", "The model returned neither a query nor a question back.");
 		}
 
-		return new AskAnswer(id, translation.Interpretation, translation.Query, translation.Clarification, answer, usage);
+		return new AskAnswer(id, conversation, translation.Interpretation, translation.Query, translation.Clarification, answer, narrative, usage);
 	}
 }

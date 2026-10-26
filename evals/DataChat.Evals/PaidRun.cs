@@ -17,8 +17,8 @@ internal static class PaidRun
 	/// <summary>The session's cap (README of the ledger, confirmed by the user on 23 Oct 2026).</summary>
 	private const decimal SessionCapUsd = 0.50m;
 
-	/// <summary>What one question can cost at most: two calls of 4K tokens in and 2K out with Haiku 5.5.</summary>
-	private const decimal WorstQuestionUsd = 0.003m;
+	/// <summary>What one question can cost at most: two reads and a summary, 4K tokens in and 2K out each, with Haiku 5.5.</summary>
+	private const decimal WorstQuestionUsd = 0.005m;
 
 	private const string KeyVariable = "ANTHROPIC_API_KEY";
 
@@ -57,9 +57,9 @@ internal static class PaidRun
 	/// <summary>Appends this run's row to the ledger.</summary>
 	/// <param name="experiment">What was run.</param>
 	/// <param name="model">The model.</param>
-	/// <param name="results">The results.</param>
+	/// <param name="results">Every question asked in the run.</param>
 	/// <param name="note">A note.</param>
-	public static void Record(string experiment, string model, IReadOnlyList<(Question Question, AppResult Result)> results, string note)
+	public static void Record(string experiment, string model, IReadOnlyList<AppResult> results, string note)
 	{
 		var row = string.Join('\t',
 		[
@@ -68,57 +68,56 @@ internal static class PaidRun
 			"data-chat",
 			experiment,
 			model,
-			results.Sum(static r => r.Result.Calls).ToString(CultureInfo.InvariantCulture),
-			results.Sum(static r => r.Result.InputTokens).ToString(CultureInfo.InvariantCulture),
+			results.Sum(static r => r.Calls).ToString(CultureInfo.InvariantCulture),
+			results.Sum(static r => r.InputTokens).ToString(CultureInfo.InvariantCulture),
 			"0",
 			"0",
-			results.Sum(static r => r.Result.OutputTokens).ToString(CultureInfo.InvariantCulture),
-			results.Sum(static r => r.Result.CostUsd).ToString("0.000000", CultureInfo.InvariantCulture),
+			results.Sum(static r => r.OutputTokens).ToString(CultureInfo.InvariantCulture),
+			results.Sum(static r => r.CostUsd).ToString("0.000000", CultureInfo.InvariantCulture),
 			note,
 		]);
 		File.AppendAllText(LedgerPath, row + "\n");
 	}
 
-	/// <summary>Writes the results file.</summary>
+	/// <summary>Writes a results file.</summary>
 	/// <param name="path">Where.</param>
-	/// <param name="model">The model.</param>
 	/// <param name="results">The results.</param>
-	/// <param name="stoppedEarly">The cap stopped the run before the last question.</param>
-	public static void Write(string path, string model, IReadOnlyList<(Question Question, AppResult Result, bool Correct, bool SameAsGold)> results, bool stoppedEarly)
+	public static void Write(string path, JsonObject results)
 	{
-		decimal Ratio(IEnumerable<bool> items) => items.Any() ? decimal.Round(items.Count(static x => x) / (decimal)items.Count(), 3) : 0m;
-
-		var summary = new JsonObject
-		{
-			["model"] = model,
-			["date"] = DateTime.UtcNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-			["questions"] = results.Count,
-			["stoppedEarly"] = stoppedEarly,
-			["accuracy"] = Ratio(results.Select(static r => r.Correct)),
-			["accuracySpanish"] = Ratio(results.Where(static r => r.Question.Language == "es").Select(static r => r.Correct)),
-			["accuracyEnglish"] = Ratio(results.Where(static r => r.Question.Language == "en").Select(static r => r.Correct)),
-			["sameAsGold"] = Ratio(results.Select(static r => r.SameAsGold)),
-			["askedBack"] = results.Count(static r => r.Result.Clarification is not null),
-			["failed"] = results.Count(static r => r.Result.Error is not null),
-			["totalCostUsd"] = results.Sum(static r => r.Result.CostUsd),
-			["averageCostUsd"] = results.Count > 0 ? decimal.Round(results.Average(static r => r.Result.CostUsd), 6) : 0m,
-			["averageLatencyMs"] = results.Count > 0 ? (long)results.Average(static r => r.Result.LatencyMs) : 0,
-			["calls"] = results.Sum(static r => r.Result.Calls),
-			["items"] = new JsonArray([.. results.Select(static r => (JsonNode)new JsonObject
-			{
-				["id"] = r.Question.Id,
-				["correct"] = r.Correct,
-				["sameAsGold"] = r.SameAsGold,
-				["interpretation"] = r.Result.Interpretation,
-				["clarification"] = r.Result.Clarification,
-				["error"] = r.Result.Error,
-				["query"] = r.Result.Query is null ? null : JsonNode.Parse(r.Result.Query),
-				["costUsd"] = r.Result.CostUsd,
-				["latencyMs"] = r.Result.LatencyMs,
-			})]),
-		};
-
 		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-		File.WriteAllText(path, summary.ToJsonString(new JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }) + "\n");
+		File.WriteAllText(path, results.ToJsonString(new JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }) + "\n");
+	}
+
+	/// <summary>A share, rounded to three decimals; 0 for nothing.</summary>
+	/// <param name="items">The yes and no.</param>
+	/// <returns>The share.</returns>
+	public static decimal Ratio(IEnumerable<bool> items)
+	{
+		var all = items.ToArray();
+		return all.Length == 0 ? 0m : decimal.Round(all.Count(static x => x) / (decimal)all.Length, 3);
+	}
+
+	/// <summary>One question's line in a results file.</summary>
+	/// <param name="id">Its id.</param>
+	/// <param name="result">What happened.</param>
+	/// <param name="extra">Set-specific fields: correct, sameAsGold, noEffect…</param>
+	/// <returns>The line.</returns>
+	public static JsonObject Item(string id, AppResult result, params (string Name, JsonNode? Value)[] extra)
+	{
+		var item = new JsonObject { ["id"] = id };
+		foreach (var (name, value) in extra)
+		{
+			item[name] = value;
+		}
+
+		item["interpretation"] = result.Interpretation;
+		item["clarification"] = result.Clarification;
+		item["error"] = result.Error;
+		item["query"] = result.Query is null ? null : JsonNode.Parse(result.Query);
+		item["narrative"] = result.Narrative;
+		item["narrativeDiscarded"] = result.NarrativeDiscarded;
+		item["costUsd"] = result.CostUsd;
+		item["latencyMs"] = result.LatencyMs;
+		return item;
 	}
 }

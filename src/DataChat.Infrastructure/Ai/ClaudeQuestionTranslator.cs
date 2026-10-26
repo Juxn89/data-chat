@@ -141,15 +141,27 @@ internal sealed class ClaudeQuestionTranslator(IOptions<AnthropicOptions> option
 	/// <summary>
 	/// The dataset's description and the question go in separate blocks, each in its own tags: the question is
 	/// material to read, never part of the instructions. A retry is a fresh single-turn request with the reasons the
-	/// previous query was rejected, not a follow-up turn.
+	/// previous query was rejected, not a follow-up turn. In a conversation, the question before and its query come
+	/// first, so "¿y en abril?" can change that query instead of starting from nothing.
 	/// </summary>
 	private static List<ContentBlockParam> Content(TranslationRequest request)
 	{
-		List<ContentBlockParam> content =
-		[
-			new TextBlockParam { Text = $"<dataset>\n{Describe(request)}\n</dataset>" },
-			new TextBlockParam { Text = $"<question>\n{request.Question}\n</question>" },
-		];
+		List<ContentBlockParam> content = [new TextBlockParam { Text = $"<dataset>\n{Describe(request)}\n</dataset>" }];
+		if (request.Previous is { } previous)
+		{
+			var read = previous.Query is null
+				? "it was not read into a query"
+				: $"it was read as {JsonSerializer.Serialize(previous.Query, QuestionSchema.Json)}";
+			content.Add(new TextBlockParam
+			{
+				Text = $"<previous_question>\n{previous.Text}\n</previous_question>\n" +
+					$"The question below follows that one in the same conversation; {read}. If it refers to it (\"¿y en abril?\", " +
+					"\"solo Centro\", \"ahora en unidades\", \"and the month before?\"), change that query as asked and keep the rest; " +
+					"if it stands on its own, read it on its own.",
+			});
+		}
+
+		content.Add(new TextBlockParam { Text = $"<question>\n{request.Question}\n</question>" });
 
 		if (request.Feedback.Count > 0)
 		{

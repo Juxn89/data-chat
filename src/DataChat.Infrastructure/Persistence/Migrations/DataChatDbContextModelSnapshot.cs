@@ -78,6 +78,10 @@ namespace DataChat.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("clarification");
 
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("conversation_id");
+
                     b.Property<decimal>("CostUsd")
                         .HasPrecision(12, 6)
                         .HasColumnType("numeric(12,6)")
@@ -117,6 +121,14 @@ namespace DataChat.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("model_calls");
 
+                    b.Property<string>("Narrative")
+                        .HasColumnType("text")
+                        .HasColumnName("narrative");
+
+                    b.Property<bool>("NarrativeDiscarded")
+                        .HasColumnType("boolean")
+                        .HasColumnName("narrative_discarded");
+
                     b.Property<string>("Outcome")
                         .IsRequired()
                         .HasColumnType("text")
@@ -147,6 +159,9 @@ namespace DataChat.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("DatasetId")
                         .HasDatabaseName("ix_questions_dataset_id");
+
+                    b.HasIndex("ConversationId", "CreatedAt")
+                        .HasDatabaseName("ix_questions_conversation_id_created_at");
 
                     b.ToTable("questions", (string)null);
                 });
