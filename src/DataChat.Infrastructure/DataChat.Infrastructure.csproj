@@ -18,5 +18,6 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="DataChat.Integration.Tests" />
+		<InternalsVisibleTo Include="DataChat.Infrastructure.Tests" />
 	</ItemGroup>
 </Project>

@@ -2,7 +2,8 @@ using System.Text.RegularExpressions;
 using DataChat.Evals;
 
 // dotnet run --project evals/DataChat.Evals -- oracle | snapshot [questions.json]
-//   oracle:   the reference SQL still gives every expected answer on the sample (CI runs this; no model, no cost).
+//   oracle:   on the sample, every question's reference SQL still gives its expected answer, and so does its gold
+//             semantic query run through the app (import, layer, compiler, read-only role). CI runs this; no model.
 //   snapshot: fills in the expected answer of questions that have none, and warns about a LIMIT that cuts a tie.
 const string Oracle = "oracle";
 const string Snapshot = "snapshot";
@@ -24,6 +25,7 @@ if (duplicates.Length > 0)
 }
 
 await using var database = await ReferenceDatabase.StartAsync();
+await using var app = command == Oracle ? await AppUnderTest.StartAsync(database.ConnectionString) : null;
 var failures = 0;
 var updated = new List<Question>();
 foreach (var question in set.Items)
@@ -49,6 +51,13 @@ foreach (var question in set.Items)
 	else if (!question.Expected.SameRows(answer))
 	{
 		Console.WriteLine($"{question.Id}: the reference SQL no longer gives the expected answer.");
+		failures++;
+	}
+	else if (await app!.RunGoldAsync(question) is var (gold, error) && (gold is null || !question.Expected.SameRows(gold)))
+	{
+		Console.WriteLine(error is null
+			? $"{question.Id}: the gold query, compiled by the app, does not give the expected answer."
+			: $"{question.Id}: the gold query failed in the app with {error}.");
 		failures++;
 	}
 }

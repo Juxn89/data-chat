@@ -1,6 +1,5 @@
 namespace DataChat.Evals;
 
-using System.Globalization;
 using System.Text.Json.Nodes;
 using DataChat.SampleData;
 using Npgsql;
@@ -22,6 +21,9 @@ internal sealed class ReferenceDatabase : IAsyncDisposable
 	private readonly PostgreSqlContainer _container = new PostgreSqlBuilder(Image).Build();
 
 	private NpgsqlDataSource? _source;
+
+	/// <summary>The database's connection string, for the app's own tables next to the reference ones.</summary>
+	public string ConnectionString => _container.GetConnectionString();
 
 	public static async Task<ReferenceDatabase> StartAsync()
 	{
@@ -49,7 +51,7 @@ internal sealed class ReferenceDatabase : IAsyncDisposable
 		var rows = new List<IReadOnlyList<JsonNode?>>();
 		while (await reader.ReadAsync())
 		{
-			rows.Add(Enumerable.Range(0, reader.FieldCount).Select(i => Value(reader, i)).ToArray());
+			rows.Add(Enumerable.Range(0, reader.FieldCount).Select(i => Answer.Cell(reader.IsDBNull(i) ? null : reader.GetValue(i))).ToArray());
 		}
 
 		return new Answer(columns, rows);
@@ -73,21 +75,6 @@ internal sealed class ReferenceDatabase : IAsyncDisposable
 		"en" => "sales_en",
 		_ => throw new InvalidOperationException($"Unknown language '{language}'."),
 	};
-
-	/// <summary>Numbers become JSON numbers (decimals keep their scale), dates ISO strings, NULL stays null.</summary>
-	private static JsonNode? Value(NpgsqlDataReader reader, int ordinal) =>
-		reader.IsDBNull(ordinal)
-			? null
-			: reader.GetValue(ordinal) switch
-			{
-				decimal number => JsonValue.Create(number),
-				long number => JsonValue.Create(number),
-				int number => JsonValue.Create(number),
-				DateTime date => JsonValue.Create(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
-				DateOnly date => JsonValue.Create(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
-				string text => JsonValue.Create(text),
-				var other => throw new InvalidOperationException($"Column {reader.GetName(ordinal)} has an unexpected type {other.GetType().Name}."),
-			};
 
 	private async Task LoadAsync(IReadOnlyList<SaleLine> lines, SampleLanguage language)
 	{
