@@ -179,7 +179,7 @@ static async Task<int> RunAsync(QuestionSet set, QuestionSet followUps, string[]
 	results["totalCostUsd"] = asked.Sum(static r => r.CostUsd);
 
 	var label = only is null ? "full run" : $"subset {string.Join(',', only)}";
-	PaidRun.Record("day6-eval-run", Model, asked, $"day 6: evals through the app with summaries, {label}, {asked.Count} questions");
+	PaidRun.Record("eval-run", Model, asked, $"evals through the app with summaries, {label}, {asked.Count} questions");
 	PaidRun.Write(Path.Combine("evals", "results", only is null ? $"{Model}.json" : $"{Model}.subset.json"), results);
 	Console.WriteLine($"{Run}: {asked.Count} questions, USD {asked.Sum(static r => r.CostUsd):0.0000}, session now USD {PaidRun.SessionSpent():0.0000}.");
 	return 0;

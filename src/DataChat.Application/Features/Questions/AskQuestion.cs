@@ -54,7 +54,8 @@ public sealed record TranslationUsage(string Model, long InputTokens, long Outpu
 /// <param name="Clarification">The question back, when it cannot be answered as asked.</param>
 /// <param name="Usage">What it cost.</param>
 /// <param name="Failure">Why there is neither: a refusal, a cut-off or malformed answer.</param>
-public sealed record Translation(string Interpretation, SemanticQuery? Query, string? Clarification, TranslationUsage Usage, string? Failure = null);
+/// <param name="Language">The question's language as the model named it ("Spanish", "English"), when it did.</param>
+public sealed record Translation(string Interpretation, SemanticQuery? Query, string? Clarification, TranslationUsage Usage, string? Failure = null, string? Language = null);
 
 /// <summary>Turns a question into a semantic query.</summary>
 public interface IQuestionTranslator
@@ -290,7 +291,7 @@ public sealed class AskQuestion(
 		if (answer is { Rows.Count: > 0 and <= NarrationFacts.MaxRows } && NarrationFacts.HasFigures(answer) && narrator.IsConfigured && usage.CostUsd < limits.QuestionBudgetUsd)
 		{
 			var facts = NarrationFacts.Of(text, answer, translation.Query?.Limit);
-			var narration = await narrator.NarrateAsync(new NarrationRequest(text, translation.Interpretation, facts.Text), cancellationToken).ConfigureAwait(false);
+			var narration = await narrator.NarrateAsync(new NarrationRequest(text, translation.Interpretation, facts.Text, translation.Language), cancellationToken).ConfigureAwait(false);
 			usage = usage.Plus(narration.Usage);
 			if (narration.Text is { Length: > 0 } summary)
 			{

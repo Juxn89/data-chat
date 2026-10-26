@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="150" viewBox="0 0 1280 150" role="img" aria-label="75 / 75 questions answered right, Spanish and English, 26 Oct 2026. 20 / 20 injection attempts with no effect, in questions and in the data. 0 invented figures shown, 1 of 75 summaries caught and discarded. USD 0.00058 per question, summary included.">
+<defs>
+	<linearGradient id="brand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fda4af"/><stop offset=".6" stop-color="#be123c"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+	<linearGradient id="metric" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fda4af"/><stop offset=".55" stop-color="#be123c"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+	<radialGradient id="orbRose"><stop offset="0" stop-color="#be123c" stop-opacity="0.14"/><stop offset="1" stop-color="#be123c" stop-opacity="0"/></radialGradient>
+	<radialGradient id="orbAmber"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.098"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>
+	<pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#be123c" fill-opacity="0.07"/></pattern></defs>
+<rect x=".5" y=".5" width="1279" height="149" rx="22" fill="#ffffff" stroke="#efdfe3"/>
+
+	<g transform="translate(160 0)">
+		<text y="64" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="800" letter-spacing="-.02em" fill="url(#metric)">75 / 75</text>
+		<text y="94" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="600" fill="#0f172a">questions answered right</text>
+		<text y="116" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#475569">Spanish and English, 26 Oct 2026</text>
+	</g>
+	<g transform="translate(480 0)">
+		<text y="64" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="800" letter-spacing="-.02em" fill="url(#metric)">20 / 20</text>
+		<text y="94" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="600" fill="#0f172a">injection attempts with no effect</text>
+		<text y="116" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#475569">in questions and in the data</text>
+	</g><line x1="320" y1="36" x2="320" y2="114" stroke="#efdfe3"/>
+	<g transform="translate(800 0)">
+		<text y="64" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="800" letter-spacing="-.02em" fill="url(#metric)">0</text>
+		<text y="94" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="600" fill="#0f172a">invented figures shown</text>
+		<text y="116" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#475569">1 of 75 summaries caught and discarded</text>
+	</g><line x1="640" y1="36" x2="640" y2="114" stroke="#efdfe3"/>
+	<g transform="translate(1120 0)">
+		<text y="64" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="800" letter-spacing="-.02em" fill="url(#metric)">USD 0.00058</text>
+		<text y="94" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="600" fill="#0f172a">per question</text>
+		<text y="116" text-anchor="middle" font-family="'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" fill="#475569">summary included</text>
+	</g><line x1="960" y1="36" x2="960" y2="114" stroke="#efdfe3"/>
+</svg>

@@ -49,7 +49,9 @@ All runs with Claude Haiku 5.5 through the app, on 26 Oct 2026. Every run is kep
 |---|---|---|---|---|---|---|
 | [Day 5, first](results/claude-haiku-5-5.first-run.json) | 86.7 % (88.3 / 80.0) | not measured yet | not measured yet | not measured yet | no summaries yet | USD 0.00045 |
 | [Day 5, second](results/claude-haiku-5-5.day-5.json) | 100 % (75/75) | not measured yet | not measured yet | not measured yet | no summaries yet | USD 0.00047 |
-| [Day 6, current](results/claude-haiku-5-5.json) | **98.7 %** (98.3 / 100) | **8/8** | **10/10** | **20/20** (18 refused) | **0 of 74** | USD 0.00057 |
+| [Day 6](results/claude-haiku-5-5.day-6.json) | 98.7 % (98.3 / 100) | 8/8 | 10/10 | 20/20 (18 refused) | 0 of 74 | USD 0.00057 |
+| [Day 10, first](results/claude-haiku-5-5.day-10-first.json) | 100 % (75/75) | 8/8 | 10/10 | 20/20 (18 refused) | 1 of 75 | USD 0.00058 |
+| [Day 10, current](results/claude-haiku-5-5.json) | **100 %** (75/75) | **8/8** | **9/10** | **20/20** (18 refused) | **1 of 75** | USD 0.00058 |
 
 - **Day 5, first run.** Its ten misses had right numbers in the wrong shape: eight grouped by a dimension the
   question had already filtered to one value ("Snacks by month" with a constant Snacks column), two laid out the
@@ -61,8 +63,17 @@ All runs with Claude Haiku 5.5 through the app, on 26 Oct 2026. Every run is kep
   de Centro y Altamira por mes en el último trimestre", added both branches together by month instead of showing
   them apart: the same ambiguity as q14, read the other way this time; the two earlier runs got it right. It is
   reported as it came out rather than reworded after the fact.
+- **Day 10, first** repeated the full run after the prompt changes of day 7. Every answer was right, but reading
+  the results showed what scoring did not check: 5 of the 15 English questions got a Spanish interpretation or
+  summary, and the day-6 run already had 4. The model now names the question's language first in its answer
+  (`language`, the schema's first property), and the summary is written in that language.
+- **Day 10, current** is the run with that fix: no answer in the wrong language. One follow-up missed: f08, "Sales by
+  branch last month" then "And the month before?", whose sentence said August while its query asked for last month
+  again (September); it passed in the two previous runs. The summary noticed the mismatch and said so, which a
+  summary should not do. Both are reported as they came out.
 - **Summaries** are checked figure by figure against the answer's rows, totals, shares and changes; a summary with
-  any other number is not shown (`NarrationFacts`). None was discarded on the final run. Two discards on a trial run
+  any other number is not shown (`NarrationFacts`). One was discarded on each day-10 run, both on q40: they
+  claimed the 24 rows were a ranking's top rows, a figure the answer does not hold. Two discards on a trial run
   were the check's fault (it did not know the period's dates yet) and were fixed there, with a test.
 - **Attacks**: 14 in the question and 6 against a poisoned file whose header and cells carry instructions
   (`poisoned.csv`). The app's tables, datasets and layers were unchanged after every one of them. The model refused

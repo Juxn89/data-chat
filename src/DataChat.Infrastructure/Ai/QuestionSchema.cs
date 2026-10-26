@@ -12,7 +12,8 @@ using NodaTime.Serialization.SystemTextJson;
 /// <param name="Interpretation">How it read the question.</param>
 /// <param name="Clarification">A question back, or null.</param>
 /// <param name="Query">A semantic query, or null.</param>
-internal sealed record ModelAnswer(string Interpretation, string? Clarification, SemanticQuery? Query);
+/// <param name="Language">The question's language, named first so the sentences after it follow it; null in scripts.</param>
+internal sealed record ModelAnswer(string Interpretation, string? Clarification, SemanticQuery? Query, string? Language = null);
 
 /// <summary>
 /// The JSON Schema the model answers with, generated per dataset (ADR 0002): its enums are this layer's metric and
@@ -65,12 +66,23 @@ internal static class QuestionSchema
 			["limit"] = Nullable(new JsonObject { ["type"] = "integer" }, "The most rows (top N), or null."),
 		};
 
+		// The language comes first: once named, the interpretation and the clarification after it are written in it.
 		var root = Object(
+			("language", Described(Enum([.. Languages]), "The language the question is written in.")),
 			("interpretation", new JsonObject { ["type"] = "string", ["description"] = "One short sentence, in the question's language, saying what is computed." }),
 			("clarification", Nullable(new JsonObject { ["type"] = "string" }, "A question back, in the question's language, when it cannot be answered as asked; otherwise null.")),
 			("query", Nullable(Object(query), "The semantic query, or null when asking back.")));
 
 		return JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(root.ToJsonString())!;
+	}
+
+	/// <summary>The languages a question can be written in.</summary>
+	internal static readonly string[] Languages = ["Spanish", "English"];
+
+	private static JsonObject Described(JsonObject schema, string description)
+	{
+		schema["description"] = description;
+		return schema;
 	}
 
 	private static JsonObject Enum(IEnumerable<string> values) =>

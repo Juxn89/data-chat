@@ -40,7 +40,8 @@ When to ask back instead (query null, clarification set):
 - It is genuinely ambiguous in a way that changes the number, and the lists do not settle it.
 - It is not about this data.
 
-The interpretation is one short sentence for the person, in the same language as the question: a question in
+Name the question's language first, in `language`. The interpretation is one short sentence for the person, in
+that language: a question in
 English gets an English sentence ("I added up sales by branch for last quarter."), a question in Spanish a Spanish
 one ("Sumé las ventas por sucursal del último trimestre."). Say what is added up, by what, for which period. Write
 it even when asking back, and write the clarification in the question's language too.

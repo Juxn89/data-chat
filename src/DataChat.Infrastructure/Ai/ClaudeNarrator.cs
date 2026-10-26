@@ -49,6 +49,7 @@ internal sealed class ClaudeNarrator(IOptions<AnthropicOptions> options) : INarr
 						Role = Role.User,
 						Content = new List<ContentBlockParam>
 						{
+							new TextBlockParam { Text = $"<language>{request.Language ?? "the question's"}</language>" },
 							new TextBlockParam { Text = $"<question>\n{request.Question}\n</question>" },
 							new TextBlockParam { Text = $"<interpretation>\n{request.Interpretation}\n</interpretation>" },
 							new TextBlockParam { Text = $"<facts>\n{request.Facts}\n</facts>" },

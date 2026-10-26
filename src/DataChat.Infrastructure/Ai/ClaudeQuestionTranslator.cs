@@ -122,7 +122,7 @@ internal sealed class ClaudeQuestionTranslator(IOptions<AnthropicOptions> option
 			var answer = JsonSerializer.Deserialize<ModelAnswer>(json.ToString(), QuestionSchema.Json);
 			return answer is null
 				? Failed(usage, "The answer was empty.")
-				: new Translation(answer.Interpretation, answer.Query, answer.Clarification, usage);
+				: new Translation(answer.Interpretation, answer.Query, answer.Clarification, usage, Language: answer.Language);
 		}
 		catch (JsonException exception)
 		{
