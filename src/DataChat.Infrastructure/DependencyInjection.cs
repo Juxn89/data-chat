@@ -1,12 +1,15 @@
 namespace DataChat.Infrastructure;
 
 using DataChat.Application.Features.Datasets;
+using DataChat.Application.Features.Questions;
 using DataChat.Application.Features.Semantics;
 using DataChat.Infrastructure.Files;
 using DataChat.Infrastructure.Persistence;
+using DataChat.Infrastructure.Querying;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
+using Npgsql;
 
 /// <summary>Registers the adapters and the use cases. The API calls it once; the integration tests against their own Postgres.</summary>
 public static class DependencyInjection
@@ -31,6 +34,12 @@ public static class DependencyInjection
 
 		AddOptions<ImportOptions>(services, configuration, ImportOptions.SectionName);
 		AddOptions<DemoOptions>(services, configuration, DemoOptions.SectionName);
+		AddOptions<QueryOptions>(services, configuration, QueryOptions.SectionName);
+
+		// Questions read datasets through plain Npgsql: their tables are only known at run time.
+		services.AddSingleton(_ => NpgsqlDataSource.Create(connectionString));
+		services.AddScoped<IQueryRunner, QueryRunner>();
+		services.AddScoped<RunQuery>();
 
 		services.AddSingleton<ISpreadsheetReader, SpreadsheetReader>();
 		services.AddScoped<IDatasetStore, DatasetStore>();

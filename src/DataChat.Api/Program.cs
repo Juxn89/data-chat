@@ -43,6 +43,7 @@ if (app.Environment.IsDevelopment())
 app.MapDefaultEndpoints();
 app.MapDatasetEndpoints(maxFileBytes);
 app.MapSemanticLayerEndpoints();
+app.MapQueryEndpoints();
 
 await app.RunAsync();
 

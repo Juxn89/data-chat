@@ -1,15 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<!-- The evals' harness (plan §5). Day 1: the oracle over the reference SQL; the model's run comes on day 5. -->
+	<!-- The evals' harness (plan §5): the oracle over the reference SQL and the app's compiler; the model's run comes on day 5. -->
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\tools\DataChat.SampleData\DataChat.SampleData.csproj" />
+		<ProjectReference Include="..\..\src\DataChat.Infrastructure\DataChat.Infrastructure.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Npgsql" />
 		<PackageReference Include="Testcontainers.PostgreSql" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" />
+		<PackageReference Include="NodaTime.Serialization.SystemTextJson" />
 	</ItemGroup>
 </Project>

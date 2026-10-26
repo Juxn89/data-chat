@@ -13,6 +13,10 @@ answer that SQL gives on the sample. The sample's "today" is 15 Oct 2026; its sa
   question's SQL is the table in the question's language.
 - Time labels follow the app's formats: months `2026-09`, quarters `2026-Q3`, years `2026`, days `2026-09-30`.
 - Answers are compared by value, row by row; column names are for people.
+- Each question also has its **gold query**: the semantic query a perfect translation gives, written by hand. The
+  oracle runs it through the app itself (import of the sample, its confirmed layer, the compiler, the read-only
+  role) and it must give the expected answer too. That checks the compiler against SQL written independently, on
+  every shape the questions need, and it is what a model's translation is diagnosed against from day 5.
 - Some expected answers are computed a second time with LINQ over the generator's lines
   (`tests/DataChat.SampleData.Tests/ExpectedAnswersTests.cs`), so a wrong range or filter in a reference SQL does
   not go unnoticed.
@@ -20,7 +24,7 @@ answer that SQL gives on the sample. The sample's "today" is 15 Oct 2026; its sa
 ## Commands
 
 ```bash
-dotnet run --project evals/DataChat.Evals -- oracle     # the reference SQL still gives every expected answer (CI)
+dotnet run --project evals/DataChat.Evals -- oracle     # reference SQL and gold queries give every expected answer (CI)
 dotnet run --project evals/DataChat.Evals -- snapshot   # fills in the answer of new questions; flags a LIMIT that cuts a tie
 ```
 

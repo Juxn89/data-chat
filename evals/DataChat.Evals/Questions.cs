@@ -4,6 +4,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using DataChat.Domain.Semantics;
+using NodaTime;
+using NodaTime.Serialization.SystemTextJson;
 
 /// <summary>
 /// <c>evals/questions.json</c>: the questions with their reference SQL, written by hand against the reference table,
@@ -45,14 +48,56 @@ internal sealed partial record QuestionSet(string Today, IReadOnlyList<Question>
 /// <param name="Language">The question's language, which is also the dataset's: <c>es</c> or <c>en</c>.</param>
 /// <param name="Text">The question as a person would ask it.</param>
 /// <param name="Sql">The reference SQL; <c>{sales}</c> is the reference table in the question's language.</param>
+/// <param name="Query">
+/// The semantic query a perfect translation gives, written by hand: what the app's compiler must turn into the same
+/// answer as the reference SQL, and what a model's translation is diagnosed against.
+/// </param>
 /// <param name="Expected">What the reference SQL returns on the sample, filled in by <c>snapshot</c>.</param>
-internal sealed record Question(string Id, string Language, string Text, string Sql, Answer? Expected);
+internal sealed record Question(string Id, string Language, string Text, string Sql, JsonObject Query, Answer? Expected)
+{
+	private static readonly JsonSerializerOptions QueryJson = CreateQueryJson();
+
+	/// <summary>The gold query as the domain type.</summary>
+	/// <returns>The query.</returns>
+	public SemanticQuery GoldQuery() =>
+		Query.Deserialize<SemanticQuery>(QueryJson) ?? throw new InvalidOperationException($"{Id} has no query.");
+
+	private static JsonSerializerOptions CreateQueryJson()
+	{
+		var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+		options.Converters.Add(new JsonStringEnumConverter());
+		options.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+		return options;
+	}
+}
 
 /// <summary>A result: column names (for people; scoring compares values) and rows.</summary>
 /// <param name="Columns">The column names.</param>
 /// <param name="Rows">The rows; numbers as JSON numbers, dates and labels as strings.</param>
 internal sealed record Answer(IReadOnlyList<string> Columns, IReadOnlyList<IReadOnlyList<JsonNode?>> Rows)
 {
+	/// <summary>An answer from rows of plain values.</summary>
+	/// <param name="columns">The column names.</param>
+	/// <param name="rows">The rows.</param>
+	/// <returns>The answer.</returns>
+	public static Answer From(IReadOnlyList<string> columns, IEnumerable<IReadOnlyList<object?>> rows) =>
+		new(columns, rows.Select(static row => (IReadOnlyList<JsonNode?>)row.Select(Cell).ToArray()).ToArray());
+
+	/// <summary>Numbers become JSON numbers (decimals keep their scale), dates ISO strings, NULL stays null.</summary>
+	/// <param name="value">The value.</param>
+	/// <returns>The JSON value.</returns>
+	public static JsonNode? Cell(object? value) => value switch
+	{
+		null or DBNull => null,
+		decimal number => JsonValue.Create(number),
+		long number => JsonValue.Create(number),
+		int number => JsonValue.Create(number),
+		DateTime date => JsonValue.Create(date.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)),
+		DateOnly date => JsonValue.Create(date.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)),
+		string text => JsonValue.Create(text),
+		_ => throw new InvalidOperationException($"A value of type {value.GetType().Name} has no JSON form here."),
+	};
+
 	/// <summary>Same rows with the same values, in the same order.</summary>
 	/// <param name="other">The other answer.</param>
 	/// <returns>Whether they match.</returns>

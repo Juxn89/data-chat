@@ -2,6 +2,7 @@ namespace DataChat.Infrastructure.Persistence;
 
 using DataChat.Application.Features.Datasets;
 using DataChat.Domain.Datasets;
+using DataChat.Infrastructure.Querying;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using NpgsqlTypes;
@@ -54,6 +55,9 @@ internal sealed class DatasetStore(DataChatDbContext db) : IDatasetStore
 		}
 
 		await ExecuteAsync(connection, $"ANALYZE {dataset.TableName}", cancellationToken).ConfigureAwait(false);
+
+		// The role questions run as reads this table and nothing else (ADR 0001, layer 4).
+		await ExecuteAsync(connection, $"GRANT SELECT ON {dataset.TableName} TO {QueryRunner.ReaderRole}", cancellationToken).ConfigureAwait(false);
 
 		db.Datasets.Add(ToRecord(dataset));
 		await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

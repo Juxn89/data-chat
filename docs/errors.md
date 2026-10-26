@@ -13,3 +13,7 @@ Every expected failure is an RFC 9457 problem document with a stable `code`. The
 | <a id="import-too_many_columns"></a>`import.too_many_columns` | 400 | More than 50 columns |
 | <a id="dataset-not_found"></a>`dataset.not_found` | 404 | No dataset with that id |
 | <a id="semantic-invalid"></a>`semantic.invalid` | 400 | A semantic layer that does not fit its dataset; each issue (`issue1`, `issue2`…) has its own code, e.g. `semantic.unknown_column`, `semantic.invalid_aggregation`, `semantic.invalid_ratio`, `semantic.duplicate_key` |
+| <a id="semantic-not_confirmed"></a>`semantic.not_confirmed` | 409 | Questions wait until a person confirms the dataset's semantic layer |
+| <a id="query-invalid"></a>`query.invalid` | 400 | A semantic query that does not fit the layer; each issue (`issue1`…) has its code, e.g. `query.unknown_metric`, `query.too_many_groups`, `query.compare_without_period` |
+| <a id="query-invalid_filter"></a>`query.invalid_filter` | 400 | A filter on a whole-number dimension with a value that is not a whole number |
+| <a id="query-timeout"></a>`query.timeout` | 503 | The question ran past the statement timeout (3 s) |

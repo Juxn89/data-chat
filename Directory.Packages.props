@@ -51,6 +51,8 @@
 		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
 		<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.12" />
 		<PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.12" />
+		<!-- Day 4: the evals build the app's services from an in-memory configuration. -->
+		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.12" />
 		<PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.10.0" />
 		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.10.0" />
 		<PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.19.1" />
@@ -69,6 +71,14 @@
 			NuGet audit fails the restore on it. 2.5.307 (3 Oct 2026) is the newest eligible patch on the 2.x line.
 		-->
 		<PackageVersion Include="MessagePack" Version="2.5.307" />
+	</ItemGroup>
+
+	<!--
+		Day 4 (26 Oct 2026, cut-off 12 Oct): FsCheck 3.6.0 is from 21 Oct, so 3.4.0 (20 Aug 2026), BSD-3-Clause, for the
+		compiler's property-based tests.
+	-->
+	<ItemGroup Label="Property-based testing">
+		<PackageVersion Include="FsCheck" Version="3.4.0" />
 	</ItemGroup>
 
 	<!--
