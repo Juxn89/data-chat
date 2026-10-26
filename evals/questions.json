@@ -329,7 +329,7 @@
 		{
 			"id": "q14",
 			"language": "es",
-			"text": "Ventas de Bebidas y Lácteos por sucursal en agosto de 2026",
+			"text": "Ventas de Bebidas y de Lácteos, cada una por separado, por sucursal en agosto de 2026",
 			"sql": "SELECT branch AS sucursal, category AS categoria, round(sum(total), 2) AS ventas FROM {sales} WHERE category IN ('Bebidas', 'Lácteos') AND date BETWEEN '2026-08-01' AND '2026-08-31' GROUP BY branch, category ORDER BY sucursal, categoria",
 			"query": {
 				"metrics": ["ventas"],
@@ -1804,7 +1804,7 @@
 		{
 			"id": "en10",
 			"language": "en",
-			"text": "Beverages and Dairy sales by branch in August 2026",
+			"text": "Beverages and Dairy sales, each one separately, by branch in August 2026",
 			"sql": "SELECT branch, category, round(sum(total), 2) AS sales FROM {sales} WHERE category IN ('Beverages', 'Dairy') AND date BETWEEN '2026-08-01' AND '2026-08-31' GROUP BY branch, category ORDER BY branch, category",
 			"query": {
 				"metrics": ["sales"],

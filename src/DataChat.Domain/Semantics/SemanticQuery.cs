@@ -1,5 +1,6 @@
 namespace DataChat.Domain.Semantics;
 
+using System.Text.Json.Serialization;
 using DataChat.Domain.Periods;
 using NodaTime;
 
@@ -106,8 +107,32 @@ public sealed record SemanticQuery(
 	/// <summary>The most rows a question returns; the compiler enforces it whatever the query says.</summary>
 	public const int MaxRows = 1000;
 
-	/// <summary>The filters, never null.</summary>
+	/// <summary>The filters, never null. A convenience over <see cref="Filters"/>, not part of the query's shape.</summary>
+	[JsonIgnore]
 	public IReadOnlyList<Filter> FilterList => Filters ?? [];
+
+	/// <summary>
+	/// The same question without groupings that cannot vary: a dimension kept to one value by a filter ("Snacks by
+	/// month") would only add a column repeating that value. A sort by it goes too.
+	/// </summary>
+	/// <returns>The simplified query.</returns>
+	public SemanticQuery WithoutConstantGroups()
+	{
+		var constant = FilterList
+			.Where(static filter => filter.Operator == FilterOperator.In && filter.Values.Distinct(StringComparer.Ordinal).Count() == 1)
+			.Select(static filter => filter.Dimension)
+			.ToHashSet(StringComparer.Ordinal);
+		if (!Dimensions.Any(constant.Contains))
+		{
+			return this;
+		}
+
+		return this with
+		{
+			Dimensions = Dimensions.Where(dimension => !constant.Contains(dimension)).ToArray(),
+			Sort = Sort is { } sort && constant.Contains(sort.By) ? null : Sort,
+		};
+	}
 
 	/// <summary>Everything wrong with this query for a layer; empty when it is valid.</summary>
 	/// <param name="layer">The dataset's semantic layer.</param>

@@ -67,6 +67,90 @@ namespace DataChat.Infrastructure.Persistence.Migrations
                     b.ToTable("datasets", (string)null);
                 });
 
+            modelBuilder.Entity("DataChat.Infrastructure.Persistence.QuestionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Clarification")
+                        .HasColumnType("text")
+                        .HasColumnName("clarification");
+
+                    b.Property<decimal>("CostUsd")
+                        .HasPrecision(12, 6)
+                        .HasColumnType("numeric(12,6)")
+                        .HasColumnName("cost_usd");
+
+                    b.Property<Instant>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("DatasetId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("dataset_id");
+
+                    b.Property<string>("ErrorCode")
+                        .HasColumnType("text")
+                        .HasColumnName("error_code");
+
+                    b.Property<long>("InputTokens")
+                        .HasColumnType("bigint")
+                        .HasColumnName("input_tokens");
+
+                    b.Property<string>("Interpretation")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("interpretation");
+
+                    b.Property<long>("LatencyMs")
+                        .HasColumnType("bigint")
+                        .HasColumnName("latency_ms");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("model");
+
+                    b.Property<int>("ModelCalls")
+                        .HasColumnType("integer")
+                        .HasColumnName("model_calls");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("outcome");
+
+                    b.Property<long>("OutputTokens")
+                        .HasColumnType("bigint")
+                        .HasColumnName("output_tokens");
+
+                    b.Property<int>("RowCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("row_count");
+
+                    b.Property<string>("SemanticQuery")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("semantic_query");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("text");
+
+                    b.HasKey("Id")
+                        .HasName("pk_questions");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_questions_created_at");
+
+                    b.HasIndex("DatasetId")
+                        .HasDatabaseName("ix_questions_dataset_id");
+
+                    b.ToTable("questions", (string)null);
+                });
+
             modelBuilder.Entity("DataChat.Infrastructure.Persistence.SemanticLayerRecord", b =>
                 {
                     b.Property<Guid>("DatasetId")
@@ -140,6 +224,16 @@ namespace DataChat.Infrastructure.Persistence.Migrations
                         });
 
                     b.Navigation("Columns");
+                });
+
+            modelBuilder.Entity("DataChat.Infrastructure.Persistence.QuestionEntity", b =>
+                {
+                    b.HasOne("DataChat.Infrastructure.Persistence.DatasetRecord", null)
+                        .WithMany()
+                        .HasForeignKey("DatasetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_questions_datasets_dataset_id");
                 });
 
             modelBuilder.Entity("DataChat.Infrastructure.Persistence.SemanticLayerRecord", b =>

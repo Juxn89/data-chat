@@ -98,6 +98,17 @@ internal sealed record Answer(IReadOnlyList<string> Columns, IReadOnlyList<IRead
 		_ => throw new InvalidOperationException($"A value of type {value.GetType().Name} has no JSON form here."),
 	};
 
+	/// <summary>
+	/// Same rows with the same values, rows and columns in any order: how a model's answer is scored (plan §5, a
+	/// comparison of sets), since "sales by branch and category" is right whichever way its rows are sorted and its
+	/// columns laid out. Which rows a top-N keeps still has to match.
+	/// </summary>
+	/// <param name="other">The other answer.</param>
+	/// <returns>Whether they match.</returns>
+	public bool SameRowsInAnyOrder(Answer other) =>
+		Rows.Count == other.Rows.Count
+		&& Canonical(this).SequenceEqual(Canonical(other), StringComparer.Ordinal);
+
 	/// <summary>Same rows with the same values, in the same order.</summary>
 	/// <param name="other">The other answer.</param>
 	/// <returns>Whether they match.</returns>
@@ -105,4 +116,12 @@ internal sealed record Answer(IReadOnlyList<string> Columns, IReadOnlyList<IRead
 		Rows.Count == other.Rows.Count
 		&& Rows.Zip(other.Rows).All(static pair => pair.First.Count == pair.Second.Count
 			&& pair.First.Zip(pair.Second).All(static cell => JsonNode.DeepEquals(cell.First, cell.Second)));
+
+	// Numbers through decimal, so 12.50 and 12.5 are the same value.
+	private static IEnumerable<string> Canonical(Answer answer) =>
+		answer.Rows
+			.Select(static row => string.Join('|', row.Select(static cell => cell is JsonValue value && value.TryGetValue<decimal>(out var number)
+				? number.ToString("0.############", System.Globalization.CultureInfo.InvariantCulture)
+				: cell?.ToJsonString() ?? "null").Order(StringComparer.Ordinal)))
+			.Order(StringComparer.Ordinal);
 }

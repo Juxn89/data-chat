@@ -62,6 +62,14 @@
 		<PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.19.0" />
 	</ItemGroup>
 
+	<!--
+		Day 5 (26 Oct 2026, cut-off 12 Oct): the official Anthropic SDK, 13.x is from 21 Oct on, so 12.54.1 (8 Oct), MIT,
+		the version booking-agent runs.
+	-->
+	<ItemGroup Label="AI">
+		<PackageVersion Include="Anthropic" Version="12.54.1" />
+	</ItemGroup>
+
 	<!-- The AppHost SDK version (13.6.1, 7 Oct 2026) is in the AppHost project file; 13.6.2 and 13.6.3 are newer. -->
 	<ItemGroup Label="Aspire">
 		<PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.6.1" />

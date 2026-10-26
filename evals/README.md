@@ -26,9 +26,34 @@ answer that SQL gives on the sample. The sample's "today" is 15 Oct 2026; its sa
 ```bash
 dotnet run --project evals/DataChat.Evals -- oracle     # reference SQL and gold queries give every expected answer (CI)
 dotnet run --project evals/DataChat.Evals -- snapshot   # fills in the answer of new questions; flags a LIMIT that cuts a tie
+dotnet run --project evals/DataChat.Evals -- run --allow-paid [--only q01,en03]   # Claude Haiku through the app (costs money)
 ```
 
-Both start a throwaway Postgres with Testcontainers, so Docker has to be running. Neither calls a model.
+All three start a throwaway Postgres with Testcontainers, so Docker has to be running. `oracle` runs the whole chat
+path with a translator that returns each question's gold query, so CI covers it without a key. `run` reads the key
+from the environment or the repo's `.env`, checks the shared ledger first and stops before the session's cap
+(`workana-data-chat`, USD 0.50), appends one row with what it spent, and writes `results/<model>.json`.
+
+## Scoring
+
+An answer is correct when its rows hold the expected values: rows and columns in any order, since "sales by branch
+and category" is right however it is laid out, but a top-N must keep the same rows. `sameAsGold` reports how often
+the model's query is exactly the hand-written one; it is a diagnosis, not the score, because two different queries
+can answer the same question.
+
+## Results
+
+| Run | Accuracy (ES / EN) | Same query as gold | Average cost | Average latency |
+|---|---|---|---|---|
+| [First run](results/claude-haiku-5-5.first-run.json), 26 Oct 2026 | 86.7 % (88.3 % / 80.0 %) | 80.0 % | USD 0.00045 | 1.7 s |
+| [Current](results/claude-haiku-5-5.json), 26 Oct 2026 | **100 % (75/75)** | 90.7 % | USD 0.00047 | 1.7 s |
+
+The first run's ten misses had right numbers in the wrong shape: eight grouped by a dimension the question had
+already filtered to one value ("Snacks by month" with a constant Snacks column), two laid out the same columns in
+another order. English questions also got Spanish interpretations. Three changes, none of them to the questions'
+answers: the server drops a grouping a filter keeps to one value, scoring compares rows as sets of cells, and the
+prompt states both rules and the interpretation's language. One question (q14 and its twin) was reworded because it
+was genuinely ambiguous: "Bebidas y Lácteos por sucursal" can mean their sum per branch.
 
 ## Status
 
@@ -36,4 +61,4 @@ Both start a throwaway Postgres with Testcontainers, so Docker has to be running
 |---|---|---|
 | Spanish, with expected answers | 60 of 60 | days 1-2 (23 and 26 Oct 2026) |
 | English, on the English dataset | 15 of 15, each the twin of a Spanish one with the same figures (a test checks it) | day 2 (26 Oct 2026) |
-| Ambiguous (should ask back), follow-ups, adversarial | 0 | days 5-6 |
+| Ambiguous (should ask back), follow-ups, adversarial | 0 | day 6 |

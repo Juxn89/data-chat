@@ -65,6 +65,29 @@ public sealed class SemanticQueryTests
 		Assert.Contains("query.no_time", new SemanticQuery(["ventas"], [], TimeGrain.Month).Validate(Layer with { TimeColumn = null }).Select(static i => i.Code));
 
 	[Fact]
+	public void A_dimension_filtered_to_one_value_is_not_grouped_by()
+	{
+		var query = new SemanticQuery(["unidades"], ["categoria"], TimeGrain.Month, [new("categoria", FilterOperator.In, ["Snacks"])], Sort: new("categoria", SortDirection.Ascending));
+
+		var simplified = query.WithoutConstantGroups();
+
+		Assert.Empty(simplified.Dimensions);
+		Assert.Null(simplified.Sort);
+		Assert.Equal(TimeGrain.Month, simplified.Grain);
+		Assert.Single(simplified.FilterList);
+	}
+
+	[Fact]
+	public void A_dimension_kept_to_several_values_or_excluded_from_one_stays()
+	{
+		var several = new SemanticQuery(["ventas"], ["sucursal", "categoria"], Filters: [new("categoria", FilterOperator.In, ["Bebidas", "Lácteos"])]);
+		var excluded = new SemanticQuery(["ventas"], ["categoria"], Filters: [new("categoria", FilterOperator.NotIn, ["Limpieza"])]);
+
+		Assert.Same(several, several.WithoutConstantGroups());
+		Assert.Same(excluded, excluded.WithoutConstantGroups());
+	}
+
+	[Fact]
 	public void A_named_period_resolves_against_the_layers_today() =>
 		Assert.Equal(
 			new DateInterval(new LocalDate(2026, 7, 1), new LocalDate(2026, 9, 30)),

@@ -3,6 +3,7 @@ namespace DataChat.Infrastructure;
 using DataChat.Application.Features.Datasets;
 using DataChat.Application.Features.Questions;
 using DataChat.Application.Features.Semantics;
+using DataChat.Infrastructure.Ai;
 using DataChat.Infrastructure.Files;
 using DataChat.Infrastructure.Persistence;
 using DataChat.Infrastructure.Querying;
@@ -16,6 +17,12 @@ public static class DependencyInjection
 {
 	/// <summary>The connection string's name, the same as the database's name in the AppHost.</summary>
 	public const string DatabaseConnectionName = "datachatdb";
+
+	/// <summary>Whether questions are answered from a script instead of the model (end-to-end tests only).</summary>
+	/// <param name="configuration">The configuration.</param>
+	/// <returns><see langword="true"/> when a script is configured.</returns>
+	public static bool UsesScriptedTranslator(IConfiguration configuration) =>
+		!string.IsNullOrEmpty(configuration?[$"{TranslatorScriptOptions.SectionName}:{nameof(TranslatorScriptOptions.File)}"]);
 
 	/// <summary>Adds everything the API needs.</summary>
 	/// <param name="services">The services.</param>
@@ -40,6 +47,21 @@ public static class DependencyInjection
 		services.AddSingleton(_ => NpgsqlDataSource.Create(connectionString));
 		services.AddScoped<IQueryRunner, QueryRunner>();
 		services.AddScoped<RunQuery>();
+
+		AddOptions<AskOptions>(services, configuration, AskOptions.SectionName);
+		AddOptions<AnthropicOptions>(services, configuration, AnthropicOptions.SectionName);
+		AddOptions<TranslatorScriptOptions>(services, configuration, TranslatorScriptOptions.SectionName);
+		if (UsesScriptedTranslator(configuration))
+		{
+			services.AddSingleton<IQuestionTranslator, ScriptedQuestionTranslator>();
+		}
+		else
+		{
+			services.AddSingleton<IQuestionTranslator, ClaudeQuestionTranslator>();
+		}
+
+		services.AddScoped<IQuestionLog, QuestionLog>();
+		services.AddScoped<AskQuestion>();
 
 		services.AddSingleton<ISpreadsheetReader, SpreadsheetReader>();
 		services.AddScoped<IDatasetStore, DatasetStore>();

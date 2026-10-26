@@ -46,14 +46,17 @@ public sealed class PostgresFixture : IAsyncLifetime
 
 	/// <summary>The use cases on the real database.</summary>
 	/// <param name="settings">Settings over the defaults, e.g. smaller limits.</param>
+	/// <param name="replace">Replaces services after registration, e.g. the translator with a fake.</param>
 	/// <returns>The services; each scope is one request's unit of work.</returns>
-	public ServiceProvider Services(IReadOnlyDictionary<string, string?>? settings = null)
+	public ServiceProvider Services(IReadOnlyDictionary<string, string?>? settings = null, Action<IServiceCollection>? replace = null)
 	{
 		var configuration = new ConfigurationBuilder()
 			.AddInMemoryCollection(new Dictionary<string, string?> { [$"ConnectionStrings:{DependencyInjection.DatabaseConnectionName}"] = ConnectionString })
 			.AddInMemoryCollection(settings ?? new Dictionary<string, string?>())
 			.Build();
-		return new ServiceCollection().AddLogging().AddInfrastructure(configuration).BuildServiceProvider();
+		var services = new ServiceCollection().AddLogging().AddInfrastructure(configuration);
+		replace?.Invoke(services);
+		return services.BuildServiceProvider();
 	}
 
 	/// <summary>Runs a scalar query.</summary>

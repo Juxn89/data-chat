@@ -9,6 +9,12 @@ using NodaTime.Serialization.SystemTextJson;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// A scripted translator answers anyone with whatever the script says: it exists for the end-to-end tests only.
+if (DependencyInjection.UsesScriptedTranslator(builder.Configuration) && !builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("Testing"))
+{
+	throw new InvalidOperationException("TranslatorScript:File is set outside Development: the scripted translator is for the end-to-end tests only.");
+}
+
 builder.AddServiceDefaults();
 builder.Services.AddProblemDetails();
 
@@ -44,6 +50,7 @@ app.MapDefaultEndpoints();
 app.MapDatasetEndpoints(maxFileBytes);
 app.MapSemanticLayerEndpoints();
 app.MapQueryEndpoints();
+app.MapQuestionEndpoints();
 
 await app.RunAsync();
 
