@@ -12,12 +12,20 @@
 		<PackageReference Include="EFCore.NamingConventions" />
 		<PackageReference Include="ClosedXML" />
 		<PackageReference Include="CsvHelper" />
+		<PackageReference Include="Anthropic" />
+		<PackageReference Include="NodaTime.Serialization.SystemTextJson" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
 		<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- Prompts: Markdown in the repo, embedded so they ship with the assembly. -->
+		<EmbeddedResource Include="Ai/Prompts/*.md" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<InternalsVisibleTo Include="DataChat.Integration.Tests" />
 		<InternalsVisibleTo Include="DataChat.Infrastructure.Tests" />
+		<InternalsVisibleTo Include="DataChat.Evals" />
 	</ItemGroup>
 </Project>

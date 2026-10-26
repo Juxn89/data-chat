@@ -16,6 +16,8 @@ internal sealed class DataChatDbContext(DbContextOptions<DataChatDbContext> opti
 
 	public DbSet<SemanticLayerRecord> SemanticLayers => Set<SemanticLayerRecord>();
 
+	public DbSet<QuestionEntity> Questions => Set<QuestionEntity>();
+
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<DatasetRecord>(dataset =>
@@ -45,6 +47,18 @@ internal sealed class DataChatDbContext(DbContextOptions<DataChatDbContext> opti
 			layer.HasKey(static l => l.DatasetId);
 			layer.Property(static l => l.Document).HasColumnType("jsonb").IsRequired();
 			layer.HasOne<DatasetRecord>().WithOne().HasForeignKey<SemanticLayerRecord>(static l => l.DatasetId).OnDelete(DeleteBehavior.Cascade);
+		});
+
+		modelBuilder.Entity<QuestionEntity>(question =>
+		{
+			question.ToTable("questions");
+			question.HasKey(static q => q.Id);
+			question.Property(static q => q.SemanticQuery).HasColumnType("jsonb");
+			question.Property(static q => q.Outcome).HasConversion<string>();
+			question.Property(static q => q.CostUsd).HasPrecision(12, 6);
+			question.HasIndex(static q => q.CreatedAt);
+			question.HasIndex(static q => q.DatasetId);
+			question.HasOne<DatasetRecord>().WithMany().HasForeignKey(static q => q.DatasetId).OnDelete(DeleteBehavior.Cascade);
 		});
 	}
 }
