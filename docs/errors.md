@@ -12,3 +12,4 @@ Every expected failure is an RFC 9457 problem document with a stable `code`. The
 | <a id="import-too_many_rows"></a>`import.too_many_rows` | 400 | More than 200,000 data rows |
 | <a id="import-too_many_columns"></a>`import.too_many_columns` | 400 | More than 50 columns |
 | <a id="dataset-not_found"></a>`dataset.not_found` | 404 | No dataset with that id |
+| <a id="semantic-invalid"></a>`semantic.invalid` | 400 | A semantic layer that does not fit its dataset; each issue (`issue1`, `issue2`…) has its own code, e.g. `semantic.unknown_column`, `semantic.invalid_aggregation`, `semantic.invalid_ratio`, `semantic.duplicate_key` |

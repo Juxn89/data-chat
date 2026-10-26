@@ -163,7 +163,7 @@ public sealed partial class ImportDataset(
 		var dataset = Dataset.Create(
 			string.IsNullOrWhiteSpace(request.Name) ? Path.GetFileNameWithoutExtension(request.FileName) : request.Name,
 			Path.GetFileName(request.FileName),
-			names.Zip(types, static (name, type) => (name, type.Type)).ToArray(),
+			names.Select((name, c) => (name, types[c].Type, ColumnProfile.Of(rows.Select(row => row[c])))).ToArray(),
 			rows.Length,
 			clock.GetCurrentInstant());
 

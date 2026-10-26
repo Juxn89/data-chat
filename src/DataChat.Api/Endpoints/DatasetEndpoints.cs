@@ -79,7 +79,7 @@ internal sealed record DatasetResponse(
 		dataset.SourceFile,
 		dataset.RowCount,
 		dataset.ImportedAt,
-		dataset.Columns.Select(static column => new ColumnResponse(column.Ordinal, column.Name, column.Type)).ToArray(),
+		dataset.Columns.Select(ColumnResponse.From).ToArray(),
 		ambiguousDateColumns);
 }
 
@@ -87,4 +87,10 @@ internal sealed record DatasetResponse(
 /// <param name="Ordinal">Its position, from 1.</param>
 /// <param name="Name">Its name.</param>
 /// <param name="Type">What it holds.</param>
-internal sealed record ColumnResponse(int Ordinal, string Name, ColumnType Type);
+/// <param name="DistinctCount">How many distinct values it has.</param>
+/// <param name="Samples">Its most frequent values.</param>
+internal sealed record ColumnResponse(int Ordinal, string Name, ColumnType Type, int DistinctCount, IReadOnlyList<string> Samples)
+{
+	public static ColumnResponse From(DatasetColumn column) =>
+		new(column.Ordinal, column.Name, column.Type, column.Profile.DistinctCount, column.Profile.Samples);
+}

@@ -101,7 +101,15 @@ internal sealed class DatasetStore(DataChatDbContext db) : IDatasetStore
 		RowCount = dataset.RowCount,
 		ImportedAt = dataset.ImportedAt,
 		Columns = dataset.Columns
-			.Select(static column => new DatasetColumnRecord { Ordinal = column.Ordinal, PhysicalName = column.PhysicalName, Name = column.Name, Type = column.Type })
+			.Select(static column => new DatasetColumnRecord
+			{
+				Ordinal = column.Ordinal,
+				PhysicalName = column.PhysicalName,
+				Name = column.Name,
+				Type = column.Type,
+				DistinctCount = column.Profile.DistinctCount,
+				Samples = [.. column.Profile.Samples],
+			})
 			.ToList(),
 	};
 
@@ -109,7 +117,7 @@ internal sealed class DatasetStore(DataChatDbContext db) : IDatasetStore
 		record.Id,
 		record.Name,
 		record.SourceFile,
-		record.Columns.OrderBy(static c => c.Ordinal).Select(static c => new DatasetColumn(c.Ordinal, c.PhysicalName, c.Name, c.Type)).ToArray(),
+		record.Columns.OrderBy(static c => c.Ordinal).Select(static c => new DatasetColumn(c.Ordinal, c.PhysicalName, c.Name, c.Type, new ColumnProfile(c.DistinctCount, c.Samples))).ToArray(),
 		record.RowCount,
 		record.ImportedAt);
 }
