@@ -8,7 +8,10 @@
     "build": "next build",
     "start": "next start --port 3030",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "e2e": "playwright test",
+    "e2e:deps": "docker run --rm -d --name data-chat-e2e-db -p 5434:5432 -e POSTGRES_PASSWORD=postgres postgres:18.6-alpine",
+    "demo": "playwright test --config playwright.demo.config.ts"
   },
   "dependencies": {
     "lucide-react": "1.52.0",
@@ -18,6 +21,7 @@
     "recharts": "3.10.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "24.19.1",
     "@types/react": "19.3.0",
