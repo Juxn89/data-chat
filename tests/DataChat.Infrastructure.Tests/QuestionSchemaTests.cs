@@ -35,6 +35,15 @@ public sealed class QuestionSchemaTests
 	}
 
 	[Fact]
+	public void The_language_comes_before_the_sentences_written_in_it()
+	{
+		var properties = Schema.GetProperty("properties");
+
+		Assert.Equal("language", properties.EnumerateObject().First().Name);
+		Assert.Equal(QuestionSchema.Languages, Enum(properties.GetProperty("language")));
+	}
+
+	[Fact]
 	public void A_dataset_without_dates_offers_no_periods_or_grains()
 	{
 		var schema = JsonSerializer.SerializeToElement(QuestionSchema.For(Sample.Layer with { TimeColumn = null }));

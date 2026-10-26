@@ -8,7 +8,8 @@ using System.Text.RegularExpressions;
 /// <param name="Question">The question.</param>
 /// <param name="Interpretation">How it was read.</param>
 /// <param name="Facts">The rows and their totals and changes, as text.</param>
-public sealed record NarrationRequest(string Question, string Interpretation, string Facts);
+/// <param name="Language">The language to write in, when the translator named it.</param>
+public sealed record NarrationRequest(string Question, string Interpretation, string Facts, string? Language = null);
 
 /// <summary>A short summary of an answer, and what it cost.</summary>
 /// <param name="Text">The summary, or null when there is none.</param>
