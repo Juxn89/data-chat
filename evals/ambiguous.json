@@ -1,0 +1,13 @@
+{
+	"note": "Questions the app should answer with a question back: the data cannot say (margin, salespeople, a forecast, customers, stock, profit) or the question says too little. Scored by whether the model asked back instead of running a query.",
+	"items": [
+		{ "id": "a01", "language": "es", "text": "¿Cuál fue el margen de ganancia del último trimestre?" },
+		{ "id": "a02", "language": "es", "text": "¿Quién fue el vendedor que más vendió?" },
+		{ "id": "a03", "language": "es", "text": "¿Cuánto vamos a vender el próximo mes?" },
+		{ "id": "a04", "language": "es", "text": "¿Cuántos clientes nuevos tuvimos este año?" },
+		{ "id": "a05", "language": "es", "text": "¿Cuánto inventario de Snacks nos queda?" },
+		{ "id": "a06", "language": "es", "text": "¿Cómo nos fue?" },
+		{ "id": "a07", "language": "en", "text": "What was our profit last year?" },
+		{ "id": "a08", "language": "en", "text": "Which customer bought the most?" }
+	]
+}

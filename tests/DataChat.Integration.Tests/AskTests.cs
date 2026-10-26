@@ -129,18 +129,79 @@ public sealed class AskTests(PostgresFixture postgres) : IAsyncLifetime
 		PlayBack translator,
 		string question,
 		IReadOnlyDictionary<string, string?>? settings = null,
-		decimal alreadySpent = 0m)
+		decimal alreadySpent = 0m,
+		Guid? conversation = null,
+		INarrator? narrator = null)
 	{
-		await using var services = postgres.Services(settings, s => s.Replace(ServiceDescriptor.Singleton<IQuestionTranslator>(translator)));
+		await using var services = postgres.Services(settings, s =>
+		{
+			s.Replace(ServiceDescriptor.Singleton<IQuestionTranslator>(translator));
+			if (narrator is not null)
+			{
+				s.Replace(ServiceDescriptor.Singleton(narrator));
+			}
+		});
 		await using var scope = services.CreateAsyncScope();
 		if (alreadySpent > 0)
 		{
 			await scope.ServiceProvider.GetRequiredService<IQuestionLog>().AddAsync(
-				new QuestionRecord(_spanish, "earlier", string.Empty, null, null, QuestionOutcome.Answered, null, 0, OneCall with { CostUsd = alreadySpent }, 0),
+				new QuestionRecord(_spanish, Guid.CreateVersion7(), "earlier", string.Empty, null, null, QuestionOutcome.Answered, null, 0, OneCall with { CostUsd = alreadySpent }, 0),
 				CancellationToken.None);
 		}
 
-		return await scope.ServiceProvider.GetRequiredService<AskQuestion>().ExecuteAsync(_spanish, question, CancellationToken.None);
+		return await scope.ServiceProvider.GetRequiredService<AskQuestion>().ExecuteAsync(_spanish, question, conversation, CancellationToken.None);
+	}
+
+	[Fact]
+	public async Task A_summary_whose_figures_are_all_in_the_answer_is_shown()
+	{
+		var narrator = new Writes("Centro vendió 12.078 dólares el último trimestre, el más alto.");
+
+		var answer = (await AskAsync(new PlayBack(new Translation("…", TopBranch, null, OneCall)), "¿Qué sucursal vendió más el último trimestre?", narrator: narrator)).Value;
+
+		Assert.Equal("Centro vendió 12.078 dólares el último trimestre, el más alto.", answer.Narrative);
+		Assert.Contains("12078.19", narrator.Facts, StringComparison.Ordinal);
+		Assert.Equal(2, answer.Usage.Calls);
+	}
+
+	[Fact]
+	public async Task A_summary_with_an_invented_figure_is_discarded_and_recorded_as_such()
+	{
+		var answer = (await AskAsync(new PlayBack(new Translation("…", TopBranch, null, OneCall)), "¿Qué sucursal vendió más el último trimestre?", narrator: new Writes("Centro vendió 15.300 dólares."))).Value;
+
+		Assert.Null(answer.Narrative);
+		Assert.True(await postgres.ScalarAsync<bool>($"SELECT narrative_discarded FROM questions WHERE id = '{answer.QuestionId}'"));
+	}
+
+	[Fact]
+	public async Task A_follow_up_is_read_with_the_question_before()
+	{
+		var first = (await AskAsync(new PlayBack(new Translation("…", TopBranch, null, OneCall)), "¿Qué sucursal vendió más el último trimestre?")).Value;
+		var translator = new PlayBack(new Translation("…", TopBranch with { Period = new(NamedPeriod.LastMonth) }, null, OneCall));
+
+		var second = (await AskAsync(translator, "¿y el mes pasado?", conversation: first.ConversationId)).Value;
+
+		Assert.Equal(first.ConversationId, second.ConversationId);
+		Assert.Equal("¿Qué sucursal vendió más el último trimestre?", translator.Requests[0].Previous!.Text);
+		Assert.Equal(NamedPeriod.LastQuarter, translator.Requests[0].Previous!.Query!.Period!.Named);
+	}
+
+	[Fact]
+	public async Task A_follow_up_to_an_unknown_conversation_is_a_404() =>
+		Assert.Equal("conversation.not_found", (await AskAsync(new PlayBack(new Translation("…", TopBranch, null, OneCall)), "¿y en abril?", conversation: Guid.NewGuid())).Error?.Code);
+
+	/// <summary>Writes the given summary, and keeps the facts it was given.</summary>
+	private sealed class Writes(string text) : INarrator
+	{
+		public string Facts { get; private set; } = string.Empty;
+
+		public bool IsConfigured => true;
+
+		public Task<Narration> NarrateAsync(NarrationRequest request, CancellationToken cancellationToken)
+		{
+			Facts = request.Facts;
+			return Task.FromResult(new Narration(text, OneCall));
+		}
 	}
 
 	/// <summary>Answers with the given translations in order, and keeps what it was asked.</summary>

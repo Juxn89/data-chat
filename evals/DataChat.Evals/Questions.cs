@@ -53,7 +53,8 @@ internal sealed partial record QuestionSet(string Today, IReadOnlyList<Question>
 /// answer as the reference SQL, and what a model's translation is diagnosed against.
 /// </param>
 /// <param name="Expected">What the reference SQL returns on the sample, filled in by <c>snapshot</c>.</param>
-internal sealed record Question(string Id, string Language, string Text, string Sql, JsonObject Query, Answer? Expected)
+/// <param name="First">For a follow-up (<c>followups.json</c>): the question asked before it in the conversation.</param>
+internal sealed record Question(string Id, string Language, string Text, string Sql, JsonObject Query, Answer? Expected, string? First = null)
 {
 	private static readonly JsonSerializerOptions QueryJson = CreateQueryJson();
 

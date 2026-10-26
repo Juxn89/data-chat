@@ -1,0 +1,2283 @@
+{
+  "model": "claude-haiku-5-5",
+  "date": "2026-10-26",
+  "questions": 75,
+  "stoppedEarly": false,
+  "accuracy": 1,
+  "accuracySpanish": 1,
+  "accuracyEnglish": 1,
+  "sameAsGold": 0.907,
+  "askedBack": 0,
+  "failed": 0,
+  "totalCostUsd": 0.035115,
+  "averageCostUsd": 0.000468,
+  "averageLatencyMs": 1692,
+  "calls": 75,
+  "items": [
+    {
+      "id": "q01",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas totales del último trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000455,
+      "latencyMs": 2388
+    },
+    {
+      "id": "q02",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por sucursal del último trimestre y ordené para ver la que más vendió.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 1,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000474,
+      "latencyMs": 1361
+    },
+    {
+      "id": "q03",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por sucursal del último trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000459,
+      "latencyMs": 1217
+    },
+    {
+      "id": "q04",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Comparo las ventas del último trimestre con el mismo trimestre del año pasado.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": "SamePeriodLastYear",
+        "dimensions": []
+      },
+      "costUsd": 0.000468,
+      "latencyMs": 1310
+    },
+    {
+      "id": "q05",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por mes durante 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000458,
+      "latencyMs": 1267
+    },
+    {
+      "id": "q06",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por mes y tomé el mes con mayor total.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Descending"
+        },
+        "grain": "Month",
+        "limit": 1,
+        "period": null,
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000457,
+      "latencyMs": 1363
+    },
+    {
+      "id": "q07",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por producto del último trimestre y muestro los 5 primeros.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 5,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "producto"
+        ]
+      },
+      "costUsd": 0.000471,
+      "latencyMs": 1812
+    },
+    {
+      "id": "q08",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por categoría de los últimos 6 meses.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastSixMonths"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "categoria"
+        ]
+      },
+      "costUsd": 0.000461,
+      "latencyMs": 1269
+    },
+    {
+      "id": "q09",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las unidades vendidas de la categoría Snacks por mes durante 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Snacks"
+            ],
+            "operator": "In",
+            "dimension": "categoria"
+          }
+        ],
+        "metrics": [
+          "unidades"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000479,
+      "latencyMs": 1791
+    },
+    {
+      "id": "q10",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Cuento las facturas distintas de la sucursal Centro en septiembre de 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2026-09-30",
+          "from": "2026-09-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Centro"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "facturas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000480,
+      "latencyMs": 1524
+    },
+    {
+      "id": "q11",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Calculo el ticket promedio por sucursal del último trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ticket_promedio"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000463,
+      "latencyMs": 1760
+    },
+    {
+      "id": "q12",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por categoría del último trimestre y las comparé con el trimestre anterior.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": "PreviousPeriod",
+        "dimensions": [
+          "categoria"
+        ]
+      },
+      "costUsd": 0.000470,
+      "latencyMs": 1688
+    },
+    {
+      "id": "q13",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de Las Colinas del último trimestre y las comparé con el trimestre anterior.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [
+          {
+            "values": [
+              "Las Colinas"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": "PreviousPeriod",
+        "dimensions": []
+      },
+      "costUsd": 0.000485,
+      "latencyMs": 1252
+    },
+    {
+      "id": "q14",
+      "correct": true,
+      "sameAsGold": false,
+      "interpretation": "Sumé las ventas de Bebidas y de Lácteos por separado, por sucursal, en agosto de 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2026-08-31",
+          "from": "2026-08-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Bebidas",
+              "Lácteos"
+            ],
+            "operator": "In",
+            "dimension": "categoria"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "categoria",
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000494,
+      "latencyMs": 1871
+    },
+    {
+      "id": "q15",
+      "correct": true,
+      "sameAsGold": false,
+      "interpretation": "Sumé las unidades vendidas en 2025.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2025-12-31",
+          "from": "2025-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "unidades"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000459,
+      "latencyMs": 1284
+    },
+    {
+      "id": "q16",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las unidades por producto en diciembre de 2025 y tomé el producto con más unidades.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "unidades",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 1,
+        "period": {
+          "to": "2025-12-31",
+          "from": "2025-12-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "unidades"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "producto"
+        ]
+      },
+      "costUsd": 0.000478,
+      "latencyMs": 1331
+    },
+    {
+      "id": "q17",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Quarter",
+        "limit": null,
+        "period": null,
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000445,
+      "latencyMs": 2673
+    },
+    {
+      "id": "q18",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de la sucursal Centro, excluyendo la categoría Limpieza, del último trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [
+          {
+            "values": [
+              "Centro"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          },
+          {
+            "values": [
+              "Limpieza"
+            ],
+            "operator": "NotIn",
+            "dimension": "categoria"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000497,
+      "latencyMs": 2325
+    },
+    {
+      "id": "q19",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por categoría en 2026 y ordené de menor a mayor para tomar las 3 que menos vendieron.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Ascending"
+        },
+        "grain": null,
+        "limit": 3,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "categoria"
+        ]
+      },
+      "costUsd": 0.000483,
+      "latencyMs": 1431
+    },
+    {
+      "id": "q20",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Calculé el ticket promedio por mes en los últimos 6 meses.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastSixMonths"
+        },
+        "filters": [],
+        "metrics": [
+          "ticket_promedio"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000462,
+      "latencyMs": 2645
+    },
+    {
+      "id": "q21",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas totales del mes pasado.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastMonth"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000455,
+      "latencyMs": 1671
+    },
+    {
+      "id": "q22",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de este año, sin desglose.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "ThisYear"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000455,
+      "latencyMs": 4751
+    },
+    {
+      "id": "q23",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas totales del año pasado.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastYear"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000454,
+      "latencyMs": 2211
+    },
+    {
+      "id": "q24",
+      "correct": true,
+      "sameAsGold": false,
+      "interpretation": "Sumé las ventas por sucursal durante 2025.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2025-12-31",
+          "from": "2025-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000462,
+      "latencyMs": 3035
+    },
+    {
+      "id": "q25",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las unidades vendidas por categoría del último trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "unidades"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "categoria"
+        ]
+      },
+      "costUsd": 0.000460,
+      "latencyMs": 1241
+    },
+    {
+      "id": "q26",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Cuento las facturas distintas emitidas en el último trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "facturas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000458,
+      "latencyMs": 1173
+    },
+    {
+      "id": "q27",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Cuento las facturas por sucursal del mes pasado.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastMonth"
+        },
+        "filters": [],
+        "metrics": [
+          "facturas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000458,
+      "latencyMs": 1221
+    },
+    {
+      "id": "q28",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Calculé el ticket promedio del último trimestre completo.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ticket_promedio"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000459,
+      "latencyMs": 1140
+    },
+    {
+      "id": "q29",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Calculo el ticket promedio de la sucursal Centro por trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Quarter",
+        "limit": null,
+        "period": null,
+        "filters": [
+          {
+            "values": [
+              "Centro"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "ticket_promedio"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000467,
+      "latencyMs": 1371
+    },
+    {
+      "id": "q30",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas mensuales de la sucursal Las Colinas en 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Las Colinas"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000480,
+      "latencyMs": 1329
+    },
+    {
+      "id": "q31",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de Bebidas por mes en los últimos 12 meses.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastTwelveMonths"
+        },
+        "filters": [
+          {
+            "values": [
+              "Bebidas"
+            ],
+            "operator": "In",
+            "dimension": "categoria"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000477,
+      "latencyMs": 1796
+    },
+    {
+      "id": "q32",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las unidades vendidas por producto en 2026 y tomé los 10 primeros.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "unidades",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 10,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "unidades"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "producto"
+        ]
+      },
+      "costUsd": 0.000476,
+      "latencyMs": 1409
+    },
+    {
+      "id": "q33",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por categoría de diciembre de 2025 y ordené de mayor a menor.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 1,
+        "period": {
+          "to": "2025-12-31",
+          "from": "2025-12-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "categoria"
+        ]
+      },
+      "costUsd": 0.000478,
+      "latencyMs": 1446
+    },
+    {
+      "id": "q34",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de la sucursal Altamira del último trimestre y las comparé con el mismo trimestre del año pasado.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [
+          {
+            "values": [
+              "Altamira"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": "SamePeriodLastYear",
+        "dimensions": []
+      },
+      "costUsd": 0.000488,
+      "latencyMs": 1198
+    },
+    {
+      "id": "q35",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por sucursal del mes pasado, comparadas con el mes anterior.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastMonth"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": "PreviousPeriod",
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000469,
+      "latencyMs": 1701
+    },
+    {
+      "id": "q36",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de la categoría Snacks por trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Quarter",
+        "limit": null,
+        "period": null,
+        "filters": [
+          {
+            "values": [
+              "Snacks"
+            ],
+            "operator": "In",
+            "dimension": "categoria"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000463,
+      "latencyMs": 1182
+    },
+    {
+      "id": "q37",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por día del 24 al 30 de septiembre de 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Day",
+        "limit": null,
+        "period": {
+          "to": "2026-09-30",
+          "from": "2026-09-24",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000465,
+      "latencyMs": 2014
+    },
+    {
+      "id": "q38",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por día de septiembre de 2026 y ordené para ver el día con más ventas.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Descending"
+        },
+        "grain": "Day",
+        "limit": 1,
+        "period": {
+          "to": "2026-09-30",
+          "from": "2026-09-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000477,
+      "latencyMs": 1268
+    },
+    {
+      "id": "q39",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de Cuidado personal en la sucursal Carretera a Masaya durante 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Cuidado personal"
+            ],
+            "operator": "In",
+            "dimension": "categoria"
+          },
+          {
+            "values": [
+              "Carretera a Masaya"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000501,
+      "latencyMs": 1315
+    },
+    {
+      "id": "q40",
+      "correct": true,
+      "sameAsGold": false,
+      "interpretation": "Sumé las ventas por sucursal y categoría del último trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal",
+          "categoria"
+        ]
+      },
+      "costUsd": 0.000463,
+      "latencyMs": 1526
+    },
+    {
+      "id": "q41",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Calculé el precio promedio por unidad por categoría durante 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "precio_promedio_por_unidad"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "categoria"
+        ]
+      },
+      "costUsd": 0.000469,
+      "latencyMs": 1175
+    },
+    {
+      "id": "q42",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por producto del último trimestre y ordené de menor a mayor para ver cuál vendió menos.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Ascending"
+        },
+        "grain": null,
+        "limit": 1,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "producto"
+        ]
+      },
+      "costUsd": 0.000477,
+      "latencyMs": 1337
+    },
+    {
+      "id": "q43",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las unidades vendidas de Café molido 400 g por mes en 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Café molido 400 g"
+            ],
+            "operator": "In",
+            "dimension": "producto"
+          }
+        ],
+        "metrics": [
+          "unidades"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000482,
+      "latencyMs": 1302
+    },
+    {
+      "id": "q44",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por categoría de los últimos seis meses, excluyendo Bebidas y Lácteos.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastSixMonths"
+        },
+        "filters": [
+          {
+            "values": [
+              "Bebidas",
+              "Lácteos"
+            ],
+            "operator": "NotIn",
+            "dimension": "categoria"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "categoria"
+        ]
+      },
+      "costUsd": 0.000488,
+      "latencyMs": 1503
+    },
+    {
+      "id": "q45",
+      "correct": true,
+      "sameAsGold": false,
+      "interpretation": "Sumé las ventas por trimestre durante 2025.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Quarter",
+        "limit": null,
+        "period": {
+          "to": "2025-12-31",
+          "from": "2025-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000461,
+      "latencyMs": 1501
+    },
+    {
+      "id": "q46",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por sucursal en diciembre de 2025.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2025-12-31",
+          "from": "2025-12-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000465,
+      "latencyMs": 1862
+    },
+    {
+      "id": "q47",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de este año y las comparé con el mismo periodo del año pasado.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "ThisYear"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": "SamePeriodLastYear",
+        "dimensions": []
+      },
+      "costUsd": 0.000467,
+      "latencyMs": 1831
+    },
+    {
+      "id": "q48",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas totales de este trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "ThisQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000456,
+      "latencyMs": 2361
+    },
+    {
+      "id": "q49",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por sucursal de los últimos 12 meses.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastTwelveMonths"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000463,
+      "latencyMs": 4069
+    },
+    {
+      "id": "q50",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las unidades de la categoría Snacks en la sucursal Las Colinas del último trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [
+          {
+            "values": [
+              "Snacks"
+            ],
+            "operator": "In",
+            "dimension": "categoria"
+          },
+          {
+            "values": [
+              "Las Colinas"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "unidades"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000494,
+      "latencyMs": 1470
+    },
+    {
+      "id": "q51",
+      "correct": true,
+      "sameAsGold": false,
+      "interpretation": "Cuento las facturas por mes durante 2025.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": "2025-12-31",
+          "from": "2025-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "facturas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000458,
+      "latencyMs": 2341
+    },
+    {
+      "id": "q52",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por sucursal de los últimos 6 meses, ordenadas de menor a mayor, y tomé las 2 primeras.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Ascending"
+        },
+        "grain": null,
+        "limit": 2,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastSixMonths"
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000483,
+      "latencyMs": 2098
+    },
+    {
+      "id": "q53",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de Panadería del mes pasado, comparadas con el mes anterior.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastMonth"
+        },
+        "filters": [
+          {
+            "values": [
+              "Panadería"
+            ],
+            "operator": "In",
+            "dimension": "categoria"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": "PreviousPeriod",
+        "dimensions": []
+      },
+      "costUsd": 0.000480,
+      "latencyMs": 1901
+    },
+    {
+      "id": "q54",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por año.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Year",
+        "limit": null,
+        "period": null,
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000442,
+      "latencyMs": 3542
+    },
+    {
+      "id": "q55",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por producto de la categoría Limpieza en 2026, ordenadas de mayor a menor, para ver cuál vendió más.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 1,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Limpieza"
+            ],
+            "operator": "In",
+            "dimension": "categoria"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "producto"
+        ]
+      },
+      "costUsd": 0.000499,
+      "latencyMs": 2526
+    },
+    {
+      "id": "q56",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de Centro y Altamira por mes del último trimestre.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [
+          {
+            "values": [
+              "Centro",
+              "Altamira"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000480,
+      "latencyMs": 1291
+    },
+    {
+      "id": "q57",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las unidades por sucursal en septiembre de 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2026-09-30",
+          "from": "2026-09-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "unidades"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "sucursal"
+        ]
+      },
+      "costUsd": 0.000464,
+      "latencyMs": 1288
+    },
+    {
+      "id": "q58",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de Bebidas en Centro del último trimestre y las comparé con el trimestre anterior.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [
+          {
+            "values": [
+              "Bebidas"
+            ],
+            "operator": "In",
+            "dimension": "categoria"
+          },
+          {
+            "values": [
+              "Centro"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": "PreviousPeriod",
+        "dimensions": []
+      },
+      "costUsd": 0.000498,
+      "latencyMs": 1430
+    },
+    {
+      "id": "q59",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por producto en Las Colinas durante 2026 y muestro los 5 primeros.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "ventas",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 5,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Las Colinas"
+            ],
+            "operator": "In",
+            "dimension": "sucursal"
+          }
+        ],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "producto"
+        ]
+      },
+      "costUsd": 0.000493,
+      "latencyMs": 1467
+    },
+    {
+      "id": "q60",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas totales del 1 al 15 de agosto de 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2026-08-15",
+          "from": "2026-08-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "ventas"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000464,
+      "latencyMs": 1122
+    },
+    {
+      "id": "en01",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I added up total sales for last quarter.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000443,
+      "latencyMs": 1360
+    },
+    {
+      "id": "en02",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I added up sales by branch for last quarter, sorted from highest to lowest, top 1.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "sales",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 1,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "branch"
+        ]
+      },
+      "costUsd": 0.000461,
+      "latencyMs": 1774
+    },
+    {
+      "id": "en03",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I added up sales by month for 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000447,
+      "latencyMs": 1573
+    },
+    {
+      "id": "en04",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I added up sales by category for the last 6 months.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastSixMonths"
+        },
+        "filters": [],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "category"
+        ]
+      },
+      "costUsd": 0.000447,
+      "latencyMs": 1231
+    },
+    {
+      "id": "en05",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las unidades de Snacks por mes durante 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Month",
+        "limit": null,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Snacks"
+            ],
+            "operator": "In",
+            "dimension": "category"
+          }
+        ],
+        "metrics": [
+          "units"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000465,
+      "latencyMs": 1360
+    },
+    {
+      "id": "en06",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I calculated the average ticket by branch for last quarter.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "average_ticket"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "branch"
+        ]
+      },
+      "costUsd": 0.000450,
+      "latencyMs": 1134
+    },
+    {
+      "id": "en07",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I added up sales by product for last quarter, top 5 by sales.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "sales",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 5,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "product"
+        ]
+      },
+      "costUsd": 0.000457,
+      "latencyMs": 1821
+    },
+    {
+      "id": "en08",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I compared total sales for last quarter with the same quarter last year.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": "SamePeriodLastYear",
+        "dimensions": []
+      },
+      "costUsd": 0.000453,
+      "latencyMs": 1107
+    },
+    {
+      "id": "en09",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I compared sales for Las Colinas in the last quarter with the quarter before it.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [
+          {
+            "values": [
+              "Las Colinas"
+            ],
+            "operator": "In",
+            "dimension": "branch"
+          }
+        ],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": "PreviousPeriod",
+        "dimensions": []
+      },
+      "costUsd": 0.000469,
+      "latencyMs": 2127
+    },
+    {
+      "id": "en10",
+      "correct": true,
+      "sameAsGold": false,
+      "interpretation": "Sumé las ventas por categoría (Bebidas y Lácteos por separado) y por sucursal de agosto de 2026.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": "2026-08-31",
+          "from": "2026-08-01",
+          "named": null
+        },
+        "filters": [
+          {
+            "values": [
+              "Beverages",
+              "Dairy"
+            ],
+            "operator": "In",
+            "dimension": "category"
+          }
+        ],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "category",
+          "branch"
+        ]
+      },
+      "costUsd": 0.000481,
+      "latencyMs": 1605
+    },
+    {
+      "id": "en11",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I added up sales by quarter.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": "Quarter",
+        "limit": null,
+        "period": null,
+        "filters": [],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000434,
+      "latencyMs": 1498
+    },
+    {
+      "id": "en12",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas por categoría en 2026 y ordené de menor a mayor, mostrando las 3 más bajas.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "sales",
+          "direction": "Ascending"
+        },
+        "grain": null,
+        "limit": 3,
+        "period": {
+          "to": "2026-12-31",
+          "from": "2026-01-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "category"
+        ]
+      },
+      "costUsd": 0.000472,
+      "latencyMs": 1368
+    },
+    {
+      "id": "en13",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "Sumé las ventas de la sucursal Centro del último trimestre, excluyendo la categoría Cleaning.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": null,
+        "grain": null,
+        "limit": null,
+        "period": {
+          "to": null,
+          "from": null,
+          "named": "LastQuarter"
+        },
+        "filters": [
+          {
+            "values": [
+              "Centro"
+            ],
+            "operator": "In",
+            "dimension": "branch"
+          },
+          {
+            "values": [
+              "Cleaning"
+            ],
+            "operator": "NotIn",
+            "dimension": "category"
+          }
+        ],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000485,
+      "latencyMs": 1539
+    },
+    {
+      "id": "en14",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I added up units by product for December 2025, sorted descending, top 1.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "units",
+          "direction": "Descending"
+        },
+        "grain": null,
+        "limit": 1,
+        "period": {
+          "to": "2025-12-31",
+          "from": "2025-12-01",
+          "named": null
+        },
+        "filters": [],
+        "metrics": [
+          "units"
+        ],
+        "compareTo": null,
+        "dimensions": [
+          "product"
+        ]
+      },
+      "costUsd": 0.000460,
+      "latencyMs": 1286
+    },
+    {
+      "id": "en15",
+      "correct": true,
+      "sameAsGold": true,
+      "interpretation": "I added up sales by month and picked the month with the highest total.",
+      "clarification": null,
+      "error": null,
+      "query": {
+        "sort": {
+          "by": "sales",
+          "direction": "Descending"
+        },
+        "grain": "Month",
+        "limit": 1,
+        "period": null,
+        "filters": [],
+        "metrics": [
+          "sales"
+        ],
+        "compareTo": null,
+        "dimensions": []
+      },
+      "costUsd": 0.000445,
+      "latencyMs": 1163
+    }
+  ]
+}

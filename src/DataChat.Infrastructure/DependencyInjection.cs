@@ -54,10 +54,12 @@ public static class DependencyInjection
 		if (UsesScriptedTranslator(configuration))
 		{
 			services.AddSingleton<IQuestionTranslator, ScriptedQuestionTranslator>();
+			services.AddSingleton<INarrator, NoNarrator>();
 		}
 		else
 		{
 			services.AddSingleton<IQuestionTranslator, ClaudeQuestionTranslator>();
+			services.AddSingleton<INarrator, ClaudeNarrator>();
 		}
 
 		services.AddScoped<IQuestionLog, QuestionLog>();

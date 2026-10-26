@@ -58,6 +58,7 @@ internal sealed class DataChatDbContext(DbContextOptions<DataChatDbContext> opti
 			question.Property(static q => q.CostUsd).HasPrecision(12, 6);
 			question.HasIndex(static q => q.CreatedAt);
 			question.HasIndex(static q => q.DatasetId);
+			question.HasIndex(static q => new { q.ConversationId, q.CreatedAt });
 			question.HasOne<DatasetRecord>().WithMany().HasForeignKey(static q => q.DatasetId).OnDelete(DeleteBehavior.Cascade);
 		});
 	}

@@ -21,6 +21,9 @@ using Npgsql;
 /// <param name="InputTokens">Input tokens.</param>
 /// <param name="OutputTokens">Output tokens.</param>
 /// <param name="LatencyMs">How long it took.</param>
+/// <param name="ConversationId">The conversation, for a follow-up.</param>
+/// <param name="Narrative">The summary shown, if any.</param>
+/// <param name="NarrativeDiscarded">A summary was written and discarded for quoting a figure not in the answer.</param>
 internal sealed record AppResult(
 	Answer? Answer,
 	string? Query,
@@ -31,7 +34,10 @@ internal sealed record AppResult(
 	int Calls,
 	long InputTokens,
 	long OutputTokens,
-	long LatencyMs);
+	long LatencyMs,
+	Guid ConversationId,
+	string? Narrative,
+	bool NarrativeDiscarded);
 
 /// <summary>
 /// The app itself on the evals' database: migrated, with the sample imported and its layers confirmed exactly as at
@@ -92,15 +98,23 @@ internal sealed class AppUnderTest : IAsyncDisposable
 	/// <summary>Asks a question on the sample in its language, as the chat would.</summary>
 	/// <param name="question">The question.</param>
 	/// <returns>What happened, cost included even when it failed.</returns>
-	public async Task<AppResult> AskAsync(Question question)
+	public Task<AppResult> AskAsync(Question question) => AskAsync(question.Language, question.Text, null);
+
+	/// <summary>Asks a text on the sample in a language, possibly as a follow-up.</summary>
+	/// <param name="language">es or en: which sample.</param>
+	/// <param name="text">The question.</param>
+	/// <param name="conversation">The conversation it follows up on.</param>
+	/// <param name="dataset">Another dataset than the sample, e.g. a poisoned one.</param>
+	/// <returns>What happened, cost included even when it failed.</returns>
+	public async Task<AppResult> AskAsync(string language, string text, Guid? conversation, Guid? dataset = null)
 	{
-		var dataset = _datasets[question.Language == "es" ? "ventas-demo.xlsx" : "sales-demo.xlsx"];
+		var target = dataset ?? _datasets[language == "es" ? "ventas-demo.xlsx" : "sales-demo.xlsx"];
 		await using var scope = _services.CreateAsyncScope();
-		var result = await scope.ServiceProvider.GetRequiredService<AskQuestion>().ExecuteAsync(dataset, question.Text, CancellationToken.None);
+		var result = await scope.ServiceProvider.GetRequiredService<AskQuestion>().ExecuteAsync(target, text, conversation, CancellationToken.None);
 
 		// The question log has the cost whatever the outcome: a failed question was paid for too.
 		await using var command = _source.CreateCommand(
-			"SELECT interpretation, semantic_query::text, clarification, cost_usd, model_calls, input_tokens, output_tokens, latency_ms FROM questions ORDER BY created_at DESC LIMIT 1");
+			"SELECT interpretation, semantic_query::text, clarification, cost_usd, model_calls, input_tokens, output_tokens, latency_ms, conversation_id, narrative, narrative_discarded FROM questions ORDER BY created_at DESC LIMIT 1");
 		await using var reader = await command.ExecuteReaderAsync();
 		await reader.ReadAsync();
 		return new AppResult(
@@ -113,7 +127,36 @@ internal sealed class AppUnderTest : IAsyncDisposable
 			reader.GetInt32(4),
 			reader.GetInt64(5),
 			reader.GetInt64(6),
-			reader.GetInt64(7));
+			reader.GetInt64(7),
+			reader.GetGuid(8),
+			reader.IsDBNull(9) ? null : reader.GetString(9),
+			reader.GetBoolean(10));
+	}
+
+	/// <summary>Imports a file into the app, confirms its proposed layer as is, and returns its id.</summary>
+	/// <param name="fileName">The file's name.</param>
+	/// <param name="content">Its bytes.</param>
+	/// <returns>The dataset's id.</returns>
+	public async Task<Guid> ImportAndConfirmAsync(string fileName, byte[] content)
+	{
+		await using var scope = _services.CreateAsyncScope();
+		using var stream = new MemoryStream(content);
+		var imported = await scope.ServiceProvider.GetRequiredService<Application.Features.Datasets.ImportDataset>()
+			.ExecuteAsync(new Application.Features.Datasets.ImportRequest(fileName, content.Length, stream), CancellationToken.None);
+		var id = imported.Value.Dataset.Id;
+		var layers = scope.ServiceProvider.GetRequiredService<Application.Features.Semantics.SemanticLayers>();
+		var proposal = (await layers.GetAsync(id, CancellationToken.None)).Value.Layer;
+		var confirmed = await layers.ConfirmAsync(id, proposal, CancellationToken.None);
+		return confirmed.IsSuccess ? id : throw new InvalidOperationException($"{fileName}'s proposed layer is not valid: {confirmed.Error!.Message}");
+	}
+
+	/// <summary>The app's own tables and the number of datasets: what an attack would have to change.</summary>
+	/// <returns>A fingerprint.</returns>
+	public async Task<string> FingerprintAsync()
+	{
+		await using var command = _source.CreateCommand(
+			"SELECT (SELECT string_agg(table_name, ',' ORDER BY table_name) FROM information_schema.tables WHERE table_schema = 'public') || '|' || (SELECT count(*) FROM datasets) || '|' || (SELECT count(*) FROM semantic_layers) || '|' || (SELECT md5(string_agg(document::text, ',' ORDER BY dataset_id)) FROM semantic_layers)");
+		return (string)(await command.ExecuteScalarAsync())!;
 	}
 
 	public async ValueTask DisposeAsync()

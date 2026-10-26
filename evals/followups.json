@@ -1,0 +1,277 @@
+{
+	"today": "2026-10-15",
+	"items": [
+		{
+			"id": "f01",
+			"language": "es",
+			"text": "¿Y el trimestre anterior?",
+			"sql": "SELECT branch AS sucursal, round(sum(total), 2) AS ventas FROM {sales} WHERE date BETWEEN '2026-04-01' AND '2026-06-30' GROUP BY branch ORDER BY ventas DESC",
+			"query": {
+				"metrics": ["ventas"],
+				"dimensions": ["sucursal"],
+				"period": {
+					"from": "2026-04-01",
+					"to": "2026-06-30"
+				}
+			},
+			"expected": {
+				"columns": ["sucursal", "ventas"],
+				"rows": [
+					["Centro", 12144.41],
+					["Altamira", 9611.22],
+					["Carretera a Masaya", 8623.24],
+					["Las Colinas", 6827.83]
+				]
+			},
+			"first": "Ventas por sucursal el último trimestre"
+		},
+		{
+			"id": "f02",
+			"language": "es",
+			"text": "¿Y en agosto?",
+			"sql": "SELECT category AS categoria, round(sum(total), 2) AS ventas FROM {sales} WHERE date BETWEEN '2026-08-01' AND '2026-08-31' GROUP BY category ORDER BY ventas DESC",
+			"query": {
+				"metrics": ["ventas"],
+				"dimensions": ["categoria"],
+				"period": {
+					"from": "2026-08-01",
+					"to": "2026-08-31"
+				}
+			},
+			"expected": {
+				"columns": ["categoria", "ventas"],
+				"rows": [
+					["Bebidas", 3115.53],
+					["Lácteos", 2087.87],
+					["Snacks", 1726.18],
+					["Panadería", 1495.38],
+					["Cuidado personal", 1313.47],
+					["Limpieza", 1304.34]
+				]
+			},
+			"first": "Ventas por categoría en septiembre de 2026"
+		},
+		{
+			"id": "f03",
+			"language": "es",
+			"text": "Ahora solo de la sucursal Centro",
+			"sql": "SELECT to_char(date, 'YYYY-MM') AS mes, round(sum(total), 2) AS ventas FROM {sales} WHERE branch = 'Centro' AND date BETWEEN '2026-01-01' AND '2026-12-31' GROUP BY mes ORDER BY mes",
+			"query": {
+				"metrics": ["ventas"],
+				"dimensions": [],
+				"grain": "Month",
+				"filters": [
+					{
+						"dimension": "sucursal",
+						"operator": "In",
+						"values": ["Centro"]
+					}
+				],
+				"period": {
+					"from": "2026-01-01",
+					"to": "2026-12-31"
+				}
+			},
+			"expected": {
+				"columns": ["mes", "ventas"],
+				"rows": [
+					["2026-01", 3192.51],
+					["2026-02", 3109.67],
+					["2026-03", 4048.82],
+					["2026-04", 4111.29],
+					["2026-05", 3933.27],
+					["2026-06", 4099.85],
+					["2026-07", 4500.49],
+					["2026-08", 3782.77],
+					["2026-09", 3794.93]
+				]
+			},
+			"first": "Ventas mensuales en 2026"
+		},
+		{
+			"id": "f04",
+			"language": "es",
+			"text": "¿Y en Las Colinas?",
+			"sql": "SELECT round(sum(total), 2) AS ventas FROM {sales} WHERE branch = 'Las Colinas' AND date BETWEEN '2026-07-01' AND '2026-09-30'",
+			"query": {
+				"metrics": ["ventas"],
+				"dimensions": [],
+				"filters": [
+					{
+						"dimension": "sucursal",
+						"operator": "In",
+						"values": ["Las Colinas"]
+					}
+				],
+				"period": {
+					"named": "LastQuarter"
+				}
+			},
+			"expected": {
+				"columns": ["ventas"],
+				"rows": [
+					[3845.06]
+				]
+			},
+			"first": "¿Cuánto vendimos el último trimestre?"
+		},
+		{
+			"id": "f05",
+			"language": "es",
+			"text": "¿Y los 5 que menos?",
+			"sql": "SELECT product AS producto, round(sum(total), 2) AS ventas FROM {sales} WHERE date BETWEEN '2026-07-01' AND '2026-09-30' GROUP BY product ORDER BY ventas ASC LIMIT 5",
+			"query": {
+				"metrics": ["ventas"],
+				"dimensions": ["producto"],
+				"period": {
+					"named": "LastQuarter"
+				},
+				"sort": {
+					"by": "ventas",
+					"direction": "Ascending"
+				},
+				"limit": 5
+			},
+			"expected": {
+				"columns": ["producto", "ventas"],
+				"rows": [
+					["Cepillo dental", 178.16],
+					["Servilletas (100 u.)", 208.00],
+					["Esponjas (3 u.)", 212.28],
+					["Yogur de fresa 200 g", 223.39],
+					["Pasta dental 100 ml", 233.18]
+				]
+			},
+			"first": "Los 5 productos que más vendieron el último trimestre"
+		},
+		{
+			"id": "f06",
+			"language": "es",
+			"text": "Ahora en ventas",
+			"sql": "SELECT category AS categoria, round(sum(total), 2) AS ventas FROM {sales} WHERE date BETWEEN '2026-01-01' AND '2026-12-31' GROUP BY category ORDER BY ventas DESC",
+			"query": {
+				"metrics": ["ventas"],
+				"dimensions": ["categoria"],
+				"period": {
+					"from": "2026-01-01",
+					"to": "2026-12-31"
+				}
+			},
+			"expected": {
+				"columns": ["categoria", "ventas"],
+				"rows": [
+					["Bebidas", 30691.63],
+					["Lácteos", 18022.08],
+					["Panadería", 14892.34],
+					["Snacks", 14586.65],
+					["Limpieza", 12676.80],
+					["Cuidado personal", 11925.42]
+				]
+			},
+			"first": "Unidades vendidas por categoría en 2026"
+		},
+		{
+			"id": "f07",
+			"language": "es",
+			"text": "¿Y las de Centro?",
+			"sql": "SELECT to_char(date, 'YYYY-\"Q\"Q') AS trimestre, round(sum(total), 2) AS ventas FROM {sales} WHERE branch = 'Centro' GROUP BY trimestre ORDER BY trimestre",
+			"query": {
+				"metrics": ["ventas"],
+				"dimensions": [],
+				"grain": "Quarter",
+				"filters": [
+					{
+						"dimension": "sucursal",
+						"operator": "In",
+						"values": ["Centro"]
+					}
+				]
+			},
+			"expected": {
+				"columns": ["trimestre", "ventas"],
+				"rows": [
+					["2025-Q2", 12221.30],
+					["2025-Q3", 12554.65],
+					["2025-Q4", 15145.80],
+					["2026-Q1", 10351.00],
+					["2026-Q2", 12144.41],
+					["2026-Q3", 12078.19]
+				]
+			},
+			"first": "Ventas de Altamira por trimestre"
+		},
+		{
+			"id": "f08",
+			"language": "en",
+			"text": "And the month before?",
+			"sql": "SELECT branch, round(sum(total), 2) AS sales FROM {sales} WHERE date BETWEEN '2026-08-01' AND '2026-08-31' GROUP BY branch ORDER BY sales DESC",
+			"query": {
+				"metrics": ["sales"],
+				"dimensions": ["branch"],
+				"period": {
+					"from": "2026-08-01",
+					"to": "2026-08-31"
+				}
+			},
+			"expected": {
+				"columns": ["branch", "sales"],
+				"rows": [
+					["Centro", 3782.77],
+					["Altamira", 3379.20],
+					["Carretera a Masaya", 2742.32],
+					["Las Colinas", 1138.48]
+				]
+			},
+			"first": "Sales by branch last month"
+		},
+		{
+			"id": "f09",
+			"language": "en",
+			"text": "Only Beverages and Dairy",
+			"sql": "SELECT category, sum(units) AS units FROM {sales} WHERE category IN ('Beverages', 'Dairy') AND date BETWEEN '2026-07-01' AND '2026-09-30' GROUP BY category ORDER BY units DESC",
+			"query": {
+				"metrics": ["units"],
+				"dimensions": ["category"],
+				"filters": [
+					{
+						"dimension": "category",
+						"operator": "In",
+						"values": ["Beverages", "Dairy"]
+					}
+				],
+				"period": {
+					"named": "LastQuarter"
+				}
+			},
+			"expected": {
+				"columns": ["category", "units"],
+				"rows": [
+					["Beverages", 4446],
+					["Dairy", 2386]
+				]
+			},
+			"first": "Units sold by category last quarter"
+		},
+		{
+			"id": "f10",
+			"language": "en",
+			"text": "And in 2026?",
+			"sql": "SELECT round(sum(total), 2) AS sales FROM {sales} WHERE date BETWEEN '2026-01-01' AND '2026-12-31'",
+			"query": {
+				"metrics": ["sales"],
+				"dimensions": [],
+				"period": {
+					"from": "2026-01-01",
+					"to": "2026-12-31"
+				}
+			},
+			"expected": {
+				"columns": ["sales"],
+				"rows": [
+					[102794.92]
+				]
+			},
+			"first": "What were total sales in 2025?"
+		}
+	]
+}

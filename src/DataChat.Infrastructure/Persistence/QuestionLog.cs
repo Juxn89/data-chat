@@ -13,6 +13,8 @@ internal sealed class QuestionEntity
 
 	public Guid DatasetId { get; set; }
 
+	public Guid ConversationId { get; set; }
+
 	public required string Text { get; set; }
 
 	public required string Interpretation { get; set; }
@@ -39,6 +41,10 @@ internal sealed class QuestionEntity
 
 	public long LatencyMs { get; set; }
 
+	public string? Narrative { get; set; }
+
+	public bool NarrativeDiscarded { get; set; }
+
 	public Instant CreatedAt { get; set; }
 }
 
@@ -54,6 +60,7 @@ internal sealed class QuestionLog(DataChatDbContext db, IClock clock) : IQuestio
 		{
 			Id = Guid.CreateVersion7(),
 			DatasetId = question.DatasetId,
+			ConversationId = question.ConversationId,
 			Text = question.Text,
 			Interpretation = question.Interpretation,
 			SemanticQuery = question.Query is null ? null : JsonSerializer.Serialize(question.Query, QuestionSchema.Json),
@@ -67,11 +74,26 @@ internal sealed class QuestionLog(DataChatDbContext db, IClock clock) : IQuestio
 			CostUsd = question.Usage.CostUsd,
 			ModelCalls = question.Usage.Calls,
 			LatencyMs = question.LatencyMs,
+			Narrative = question.Narrative,
+			NarrativeDiscarded = question.NarrativeDiscarded,
 			CreatedAt = clock.GetCurrentInstant(),
 		};
 		db.Questions.Add(entity);
 		await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 		return entity.Id;
+	}
+
+	public async Task<PreviousQuestion?> LastInConversationAsync(Guid conversationId, Guid datasetId, CancellationToken cancellationToken)
+	{
+		var last = await db.Questions.AsNoTracking()
+			.Where(q => q.ConversationId == conversationId && q.DatasetId == datasetId)
+			.OrderByDescending(static q => q.CreatedAt)
+			.Select(static q => new { q.Text, q.SemanticQuery })
+			.FirstOrDefaultAsync(cancellationToken)
+			.ConfigureAwait(false);
+		return last is null
+			? null
+			: new PreviousQuestion(last.Text, last.SemanticQuery is null ? null : JsonSerializer.Deserialize<Domain.Semantics.SemanticQuery>(last.SemanticQuery, QuestionSchema.Json));
 	}
 
 	public async Task<decimal> SpentSinceAsync(Instant since, CancellationToken cancellationToken) =>
