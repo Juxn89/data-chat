@@ -1,12 +1,27 @@
 "use client";
 
-import { CircleHelp, Code2, Lightbulb, Table2 } from "lucide-react";
+import { CircleHelp, Code2, Download, Lightbulb, Table2 } from "lucide-react";
 import { useState } from "react";
 import { AnswerChart } from "@/components/AnswerChart";
+import { FeedbackBar } from "@/components/FeedbackBar";
 import { ResultTable } from "@/components/ResultTable";
 import type { AskAnswer } from "@/lib/api";
+import { download, toCsv } from "@/lib/csv";
 import { formatDate } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
+
+/** A file name from the question: its words, plain, at most 60 characters. */
+function fileName(question: string): string {
+	return (
+		question
+			.normalize("NFD")
+			.replace(/[̀-ͯ]/g, "")
+			.replace(/[^\w]+/g, "-")
+			.replace(/^-+|-+$/g, "")
+			.toLowerCase()
+			.slice(0, 60) || "respuesta"
+	);
+}
 
 /** One question and its answer: how it was read, the summary, the chart, and the table and SQL on demand. */
 export function AnswerCard({ question, answer, error, pending }: { question: string; answer?: AskAnswer; error?: string; pending: boolean }) {
@@ -88,6 +103,16 @@ export function AnswerCard({ question, answer, error, pending }: { question: str
 										) : null}
 									</div>
 								</details>
+								{result.rows.length > 0 ? (
+									<button
+										type="button"
+										onClick={() => download(toCsv(result, locale, t.chat.previous, t.chat.timeColumn), `${fileName(question)}.csv`)}
+										className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm text-muted hover:bg-black/5 hover:text-ink"
+									>
+										<Download className="size-4" aria-hidden />
+										{t.feedback.download}
+									</button>
+								) : null}
 								<span className="ml-auto text-xs text-muted">{t.chat.cost(answer.usage.costUsd.toFixed(5))}</span>
 							</div>
 
@@ -95,6 +120,8 @@ export function AnswerCard({ question, answer, error, pending }: { question: str
 							{result.truncated ? <p className="text-xs text-muted">{t.chat.truncated}</p> : null}
 						</>
 					) : null}
+
+					<FeedbackBar questionId={answer.questionId} />
 				</div>
 			) : null}
 		</article>

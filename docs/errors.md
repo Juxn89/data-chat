@@ -22,3 +22,5 @@ Every expected failure is an RFC 9457 problem document with a stable `code`. The
 | <a id="ai-not_configured"></a>`ai.not_configured` | 503 | No API key: questions need the model |
 | <a id="ai-daily_budget"></a>`ai.daily_budget` | 503 | Today's budget for the model is spent (USD 1 by default) |
 | <a id="ai-failed"></a>`ai.failed` | 503 | The model declined, was cut off, or answered with neither a query nor a question back |
+| <a id="question-not_found"></a>`question.not_found` | 404 | Feedback on a question that does not exist |
+| <a id="feedback-invalid"></a>`feedback.invalid` | 400 | A feedback note longer than 500 characters |

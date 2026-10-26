@@ -67,6 +67,29 @@ export type AskAnswer = {
 	usage: Usage;
 };
 
+export type Feedback = "Helpful" | "Wrong";
+export type Outcome = "Answered" | "Clarified" | "Failed";
+
+export type QuestionSummary = {
+	id: string;
+	conversationId: string;
+	text: string;
+	interpretation: string;
+	outcome: Outcome;
+	errorCode: string | null;
+	clarification: string | null;
+	rowCount: number;
+	costUsd: number;
+	latencyMs: number;
+	summaryShown: boolean;
+	summaryDiscarded: boolean;
+	feedback: Feedback | null;
+	feedbackNote: string | null;
+	askedAt: string;
+};
+
+export type History = { items: QuestionSummary[]; spentTodayUsd: number; dailyBudgetUsd: number };
+
 /** A request the API refused, with its stable code (docs/errors.md) and, for invalid layers, every issue. */
 export class ApiProblem extends Error {
 	constructor(
@@ -116,4 +139,11 @@ export const api = {
 		send<SemanticLayer>(`/datasets/${id}/semantic-layer`, { method: "PUT", ...json(layer) }),
 	ask: (id: string, text: string, conversationId: string | null) =>
 		send<AskAnswer>(`/datasets/${id}/questions`, { method: "POST", ...json({ text, conversationId }) }),
+	history: (id: string) => send<History>(`/datasets/${id}/questions`),
+	feedback: async (questionId: string, feedback: Feedback, note?: string) => {
+		const response = await fetch(`${base}/questions/${questionId}/feedback`, { method: "POST", ...json({ feedback, note }) });
+		if (!response.ok) {
+			throw new ApiProblem(response.status, "feedback.failed", response.statusText);
+		}
+	},
 };

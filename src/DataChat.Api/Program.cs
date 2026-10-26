@@ -51,6 +51,7 @@ app.MapDatasetEndpoints(maxFileBytes);
 app.MapSemanticLayerEndpoints();
 app.MapQueryEndpoints();
 app.MapQuestionEndpoints();
+app.MapHistoryEndpoints();
 
 await app.RunAsync();
 
